@@ -89,9 +89,16 @@ public ref struct CodeTextWriter : IDisposable
          WriteLine(content, multiLine);
       }
    }
+
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public void WriteLine(scoped Span<char> content, bool multiLine = false)
+   {
+      Write(content, multiLine);
+      WriteLine();
+   }
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public void WriteLine(scoped in ReadOnlySpan<char> content, bool multiLine = false)
+   public void WriteLine(scoped ReadOnlySpan<char> content, bool multiLine = false)
    {
       Write(content, multiLine);
       WriteLine();
@@ -103,13 +110,13 @@ public ref struct CodeTextWriter : IDisposable
    }
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public void WriteText(scoped in ReadOnlySpan<char> text)
+   public void WriteText(scoped ReadOnlySpan<char> text)
    {
       AddIndentOnDemand();
       _buffer.Write(text);
    }
 
-   public void Write(scoped in ReadOnlySpan<char> text, bool multiLine = false)
+   public void Write(scoped ReadOnlySpan<char> text, bool multiLine = false)
    {
       if (!multiLine)
       {
@@ -117,31 +124,29 @@ public ref struct CodeTextWriter : IDisposable
       }
       else
       {
-         var copyText = text;
-         
-         while (copyText.Length > 0)
+         while (text.Length > 0)
          {
-            var newLinePos = copyText.IndexOf(_newLineCharacter);
+            var newLinePos = text.IndexOf(_newLineCharacter);
 
             if (newLinePos >= 0)
             {
-               var line = copyText[..newLinePos];
+               var line = text[..newLinePos];
                
                WriteIf(!line.IsEmpty, line);
                WriteLine();
 
-               copyText = copyText[(newLinePos + 1)..];
+               text = text[(newLinePos + 1)..];
             }
             else
             {
-               WriteText(copyText);
+               WriteText(text);
                break;
             }
          }
       }
    }
 
-   public void WriteIf(bool condition, scoped in ReadOnlySpan<char> content, bool multiLine = false)
+   public void WriteIf(bool condition, scoped ReadOnlySpan<char> content, bool multiLine = false)
    {
       if (condition)
       {

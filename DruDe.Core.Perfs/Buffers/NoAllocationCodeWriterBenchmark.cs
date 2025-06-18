@@ -20,12 +20,10 @@ public class NoAllocationCodeWriterBenchmark
       
       for (var i = 0; i < N; i++)
       {
-         var aa = new CodeTextWriter(
+         var writer = new CodeTextWriter(
             span,
             indent,
             3, ' ');
-
-         ref var writer = ref aa;
          
          writer.WriteLine("public class Test");
          writer.OpenBody();

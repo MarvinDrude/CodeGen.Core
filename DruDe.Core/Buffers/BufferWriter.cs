@@ -81,7 +81,7 @@ public ref struct BufferWriter<T> : IDisposable
    }
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public void Write(scoped in ReadOnlySpan<T> span)
+   public void Write(scoped ReadOnlySpan<T> span)
    {
       if (span.IsEmpty) return;
 
