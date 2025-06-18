@@ -107,7 +107,7 @@ public ref struct BufferWriter<T> : IDisposable
          newLength = _owner.Length + growBy;
       }
 
-      ref var lastOwner = ref _owner;
+      var lastOwner = _owner;
       _owner = BufferAllocator<T>.CreatePooled(newLength, true);
       
       lastOwner.Span.CopyTo(_owner.Span);

@@ -1,4 +1,5 @@
 ﻿<Solution>
+  <Folder Name="/Perfs/" />
   <Folder Name="/Tests/">
     <Project Path="DruDe.Core.Tests\DruDe.Core.Tests.csproj" Type="Classic C#" />
   </Folder>
