@@ -1,3 +1,6 @@
 ﻿<Solution>
+  <Folder Name="/Tests/">
+    <Project Path="DruDe.Core.Tests\DruDe.Core.Tests.csproj" Type="Classic C#" />
+  </Folder>
   <Project Path="DruDe.Core\DruDe.Core.csproj" Type="Classic C#" />
 </Solution>

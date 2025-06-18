@@ -14,6 +14,7 @@ public ref struct CodeTextWriter : IDisposable
    
    private BufferWriter<char> _indentCache;
    private int _currentLevel;
+   private readonly int _indentCount;
    private ReadOnlySpan<char> _currentLevelBuffer;
 
    private BufferWriter<char> _buffer;
@@ -21,12 +22,14 @@ public ref struct CodeTextWriter : IDisposable
    public CodeTextWriter(
       Span<char> buffer,
       Span<char> indentBuffer,
+      int indentCount = 1,
       char indentCharacter = DefaultIndent,
       char newLineCharacter = DefaultNewLine)
    {
       _indentCharacter = indentCharacter;
+      _indentCount = indentCount;
+      
       _newLineCharacter = newLineCharacter;
-
       _buffer = new BufferWriter<char>(buffer);
       
       _currentLevel = 0;
@@ -47,15 +50,15 @@ public ref struct CodeTextWriter : IDisposable
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void CloseBody()
    {
-      WriteLine("}");
       DownIndent();
+      WriteLine("}");
    }
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void CloseBodySemicolon()
    {
-      WriteLine("};");
       DownIndent();
+      WriteLine("};");
    }
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -163,12 +166,14 @@ public ref struct CodeTextWriter : IDisposable
          return [];
       }
 
-      while (_indentCache.Position < _currentLevel)
+      var levelCount = _indentCount * _currentLevel;
+      
+      while (_indentCache.Position < levelCount)
       {
          _indentCache.Add(_indentCharacter);
       }
 
-      return _indentCache.WrittenSpan[.._currentLevel];
+      return _indentCache.WrittenSpan[..levelCount];
    }
 
    private void AddIndentOnDemand()
