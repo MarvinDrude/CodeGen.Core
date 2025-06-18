@@ -6,6 +6,12 @@ namespace DruDe.Core.Buffers;
 [StructLayout(LayoutKind.Auto)]
 public ref struct CodeTextWriter : IDisposable
 {
+   public ReadOnlySpan<char> WrittenSpan
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _buffer.WrittenSpan;
+   }
+   
    private const char DefaultIndent = '\t';
    private const char DefaultNewLine = '\n';
 

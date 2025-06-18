@@ -84,8 +84,12 @@ public ref struct BufferWriter<T> : IDisposable
    public void Write(scoped in ReadOnlySpan<T> span)
    {
       if (span.IsEmpty) return;
-      
-      span.CopyTo(AcquireSpan(span.Length));
+
+      span.CopyTo(
+         FreeCapacity >= span.Length 
+            ? _owner.Span[_position..] 
+            : AcquireSpan(span.Length));
+
       _position += span.Length;
    }
    
