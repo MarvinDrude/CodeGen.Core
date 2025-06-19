@@ -22,6 +22,7 @@ public ref struct CodeTextWriter : IDisposable
    private int _currentLevel;
    private readonly int _indentCount;
    private ReadOnlySpan<char> _currentLevelBuffer;
+   private char _lastChar;
 
    private BufferWriter<char> _buffer;
    
@@ -37,6 +38,7 @@ public ref struct CodeTextWriter : IDisposable
       
       _newLineCharacter = newLineCharacter;
       _buffer = new BufferWriter<char>(buffer, 400);
+      _lastChar = '\0';
       
       _currentLevel = 0;
       _indentCache = new BufferWriter<char>(indentBuffer);
@@ -71,6 +73,7 @@ public ref struct CodeTextWriter : IDisposable
    public void WriteLine()
    {
       _buffer.Add(_newLineCharacter);
+      _lastChar = _newLineCharacter;
    }
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -114,6 +117,7 @@ public ref struct CodeTextWriter : IDisposable
    {
       AddIndentOnDemand();
       _buffer.Write(text);
+      _lastChar = text[^1];
    }
 
    public void Write(scoped ReadOnlySpan<char> text, bool multiLine = false)
@@ -194,7 +198,7 @@ public ref struct CodeTextWriter : IDisposable
          return;
       }
       
-      if (_buffer.Position == 0 || _buffer.WrittenSpan[^1] == _newLineCharacter)
+      if (_buffer.Position == 0 || _lastChar == _newLineCharacter)
       {
          _buffer.Write(_currentLevelBuffer);
       }
