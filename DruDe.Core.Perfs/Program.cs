@@ -6,13 +6,13 @@ using DruDe.Core.CodeGen.Immediate;
 using DruDe.Core.Perfs.Buffers;
 using DruDe.Core.Perfs.CodeGen;
 
-for (var e = 0; e < 10_000; e++)
-{
-   new OldWriterCompareBenchmark().NewWriterNoArrayPoolNeededNoToStringResult();
-}
+// for (var e = 0; e < 10_000; e++)
+// {
+//    new OldWriterCompareBenchmark().NewWriterNoArrayPoolNeededNoToStringResult();
+// }
 
 #if RELEASE
-//BenchmarkRunner.Run<OldWriterCompareBenchmark>();
+BenchmarkRunner.Run<OldWriterCompareBenchmark>();
 #else
 
 new OldWriterCompareBenchmark().OldWriterNoToStringResult();

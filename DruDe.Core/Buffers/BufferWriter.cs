@@ -6,15 +6,34 @@ namespace DruDe.Core.Buffers;
 [StructLayout(LayoutKind.Sequential)]
 public ref struct BufferWriter<T> : IDisposable
 {
-   public readonly int Capacity => _owner.Length;
-   public readonly int FreeCapacity => _owner.Length - _position;
+   public readonly int Capacity
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _owner.Length;
+   }
+   
+   public readonly int FreeCapacity
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _owner.Length - _position;
+   }
 
-   public readonly ReadOnlySpan<T> WrittenSpan => Buffer[.._position];
-   public readonly BufferOwner<T> Owner => _owner;
+   public readonly ReadOnlySpan<T> WrittenSpan
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => Buffer[.._position];
+   }
+   public readonly BufferOwner<T> Owner
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _owner;
+   }
    
    public int Position
    {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
       readonly get => _position;
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
       set
       {
          if (value > Capacity || value < 0)
@@ -24,8 +43,14 @@ public ref struct BufferWriter<T> : IDisposable
          _position = value;
       }
    }
+
+   private readonly Span<T> Buffer
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _owner.Span;
+   }
    
-   private readonly Span<T> Buffer => _owner.Span;
+   
    private BufferOwner<T> _owner;
    private bool _isGrown;
    private bool _disposed;
@@ -89,8 +114,6 @@ public ref struct BufferWriter<T> : IDisposable
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void Write(scoped ReadOnlySpan<T> span)
    {
-      if (span.IsEmpty) return;
-
       span.CopyTo(
          FreeCapacity >= span.Length 
             ? _owner.Span[_position..] 

@@ -31,6 +31,7 @@ public ref struct CodeBuilder : IDisposable
       MethodIm = new MethodImmediateBuilder(ref Unsafe.AsRef(ref this));
    }
 
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public override string ToString()
    {
       return Writer.ToString();

@@ -51,8 +51,25 @@ public static class ClassImmediateBuilderExtensions
       var start = StringConstants.ColonSpace;
       
       writer.UpIndent();
-      writer.Write(start);
-      writer.Write(name);
+
+      var totalSize = start.Length + name.Length;
+
+      if (totalSize <= 1024)
+      {
+         Span<char> buffer = stackalloc char[totalSize];
+         var completeBuffer = buffer;
+
+         start.CopyTo(buffer);
+         buffer = buffer[start.Length..];
+
+         name.CopyTo(buffer);
+         writer.Write(completeBuffer);
+      }
+      else
+      {
+         writer.Write(start);
+         writer.Write(name);
+      }
       
       if (close)
       {
@@ -66,11 +83,35 @@ public static class ClassImmediateBuilderExtensions
       this ref ClassImmediateBuilder self, scoped ReadOnlySpan<char> name, bool close = false)
    {
       ref var writer = ref self.Builder.Writer;
-      var space = StringConstants.TwoSpace;
-      
-      writer.WriteLine(StringConstants.Comma);
-      writer.Write(space);
-      writer.Write(name);
+      var totalSize = name.Length + 2 + 2 + writer.IndentCount * writer.CurrentIndentLevel;
+
+      if (totalSize <= 1024)
+      {
+         Span<char> buffer = stackalloc char[totalSize];
+         var completeBuffer = buffer;
+
+         buffer[0] = ',';
+         buffer[1] = writer.NewLineCharacter;
+         buffer = buffer[2..];
+
+         var indent = writer.GetCurrentIndentBuffer();
+         indent.CopyTo(buffer);
+         buffer = buffer[indent.Length..];
+         
+         buffer[0] = ' ';
+         buffer[1] = ' ';
+         buffer = buffer[2..];
+
+         name.CopyTo(buffer);
+         
+         writer.Write(completeBuffer);
+      }
+      else
+      {
+         writer.WriteLine(StringConstants.Comma);
+         writer.Write(StringConstants.TwoSpace);
+         writer.Write(name);
+      }
       
       if (close)
       {

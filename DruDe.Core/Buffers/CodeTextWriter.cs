@@ -12,6 +12,30 @@ public ref struct CodeTextWriter : IDisposable
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       get => _buffer.WrittenSpan;
    }
+
+   public char IndentCharacter
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _indentCharacter;
+   }
+   
+   public char NewLineCharacter
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _newLineCharacter;
+   }
+   
+   public int IndentCount
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _indentCount;
+   }
+   
+   public int CurrentIndentLevel
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _currentLevel;
+   }
    
    private const char DefaultIndent = '\t';
    private const char DefaultNewLine = '\n';
@@ -84,6 +108,7 @@ public ref struct CodeTextWriter : IDisposable
       }
    }
 
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void WriteLineIf(bool condition, scoped ReadOnlySpan<char> content, bool multiLine = false)
    {
       if (condition)
@@ -106,6 +131,7 @@ public ref struct CodeTextWriter : IDisposable
       WriteLine();
    }
    
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void WriteText(string text)
    {
       WriteText(text.AsSpan());
@@ -149,6 +175,7 @@ public ref struct CodeTextWriter : IDisposable
       }
    }
 
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void WriteIf(bool condition, scoped ReadOnlySpan<char> content, bool multiLine = false)
    {
       if (condition)
@@ -173,7 +200,8 @@ public ref struct CodeTextWriter : IDisposable
       _currentLevelBuffer = GetCurrentIndentBuffer();
    }
    
-   private ReadOnlySpan<char> GetCurrentIndentBuffer()
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public ReadOnlySpan<char> GetCurrentIndentBuffer()
    {
       if (_currentLevel == 0)
       {

@@ -30,7 +30,7 @@ public static class MethodImmediateBuilderExtensions
       bool hasParameters = true)
    {
       ref var writer = ref self.Builder.Writer;
-      var totalSize = modifiers.Length + name.Length + returnType.Length + 2;
+      var totalSize = modifiers.Length + name.Length + returnType.Length + 2 + (hasParameters ? 2 : 1);
 
       if (totalSize <= 1024)
       {
@@ -50,6 +50,14 @@ public static class MethodImmediateBuilderExtensions
          buffer = buffer[1..];
          
          name.CopyTo(buffer);
+         buffer = buffer[name.Length..];
+         buffer[0] = '(';
+         
+         if (hasParameters)
+         {
+            buffer[1] = writer.NewLineCharacter;
+         }
+         
          writer.Write(completeBuffer);
       }
       else
@@ -59,15 +67,15 @@ public static class MethodImmediateBuilderExtensions
          writer.Write(returnType);
          writer.Write(StringConstants.Space);
          writer.Write(name);
-      }
       
-      if (hasParameters)
-      {
-         writer.WriteLine(StringConstants.OpenParenthese);
-      }
-      else
-      {
-         writer.Write(StringConstants.OpenParenthese);
+         if (hasParameters)
+         {
+            writer.WriteLine(StringConstants.OpenParenthese);
+         }
+         else
+         {
+            writer.Write(StringConstants.OpenParenthese);
+         }
       }
       
       return ref self;
