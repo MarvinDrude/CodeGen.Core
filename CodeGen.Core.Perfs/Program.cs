@@ -5,13 +5,13 @@ using CodeGen.Common.CodeGen;
 using CodeGen.Common.CodeGen.Immediate;
 using CodeGen.Core.Perfs.CodeGen;
 
-for (var e = 0; e < 10_000; e++)
-{
-   new OldWriterCompareBenchmark().NewWriterStatefulNoArrayPoolNeededNoStringResult();
-}
+// for (var e = 0; e < 10_000; e++)
+// {
+//    new OldWriterCompareBenchmark().NewWriterStatefulNoArrayPoolNeededNoStringResult();
+// }
 
 #if RELEASE
-//BenchmarkRunner.Run<OldWriterCompareBenchmark>();
+BenchmarkRunner.Run<OldWriterCompareBenchmark>();
 #else
 
 new OldWriterCompareBenchmark().OldWriterNoToStringResult();
