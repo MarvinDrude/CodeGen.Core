@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace DruDe.Core.Buffers;
 
-[StructLayout(LayoutKind.Auto)]
+[StructLayout(LayoutKind.Sequential)]
 public ref struct CodeTextWriter : IDisposable
 {
    public ReadOnlySpan<char> WrittenSpan
@@ -82,7 +82,7 @@ public ref struct CodeTextWriter : IDisposable
       }
    }
 
-   public void WriteLineIf(bool condition, scoped in ReadOnlySpan<char> content, bool multiLine = false)
+   public void WriteLineIf(bool condition, scoped ReadOnlySpan<char> content, bool multiLine = false)
    {
       if (condition)
       {

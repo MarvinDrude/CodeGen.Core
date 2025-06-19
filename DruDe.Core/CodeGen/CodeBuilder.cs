@@ -5,12 +5,13 @@ using DruDe.Core.CodeGen.Immediate;
 
 namespace DruDe.Core.CodeGen;
 
-[StructLayout(LayoutKind.Auto)]
+[StructLayout(LayoutKind.Sequential)]
 public ref struct CodeBuilder : IDisposable
 {
    public CodeTextWriter Writer;
-
+   
    public NameSpaceImmediateBuilder NameSpaceIm;
+   public ClassImmediateBuilder ClassIm;
 
    public CodeBuilder(
       Span<char> buffer,
@@ -25,6 +26,7 @@ public ref struct CodeBuilder : IDisposable
          newLineCharacter);
       
       NameSpaceIm = new NameSpaceImmediateBuilder(ref Unsafe.AsRef(ref this));
+      ClassIm = new ClassImmediateBuilder(ref Unsafe.AsRef(ref this));
    }
    
    public void Dispose()

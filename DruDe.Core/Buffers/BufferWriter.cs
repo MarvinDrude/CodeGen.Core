@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace DruDe.Core.Buffers;
 
-[StructLayout(LayoutKind.Auto)]
+[StructLayout(LayoutKind.Sequential)]
 public ref struct BufferWriter<T> : IDisposable
 {
    public readonly int Capacity => _owner.Length;
