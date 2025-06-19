@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using DruDe.Core.CodeGen;
 
 namespace DruDe.Core.Buffers;
 
@@ -41,17 +42,15 @@ public ref struct CodeTextWriter : IDisposable
       _lastChar = '\0';
       
       _currentLevel = 0;
+      
       _indentCache = new BufferWriter<char>(indentBuffer);
-      for (var e = 0; e < indentBuffer.Length; e++)
-      {
-         _indentCache.Add(ref _indentCharacter);
-      }
+      _indentCache.Fill(_indentCharacter);
    }
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void OpenBody()
    {
-      WriteLine("{");
+      WriteLine(StringConstants.OpenCurlyBracket);
       UpIndent();
    }
 
@@ -59,14 +58,14 @@ public ref struct CodeTextWriter : IDisposable
    public void CloseBody()
    {
       DownIndent();
-      WriteLine("}");
+      WriteLine(StringConstants.CloseCurlyBracket);
    }
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void CloseBodySemicolon()
    {
       DownIndent();
-      WriteLine("};");
+      WriteLine(StringConstants.CloseCurlyBracketSemicolon);
    }
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -146,8 +146,6 @@ public static class MethodImmediateBuilderExtensions
       ref var writer = ref self.Builder.Writer;
       writer.WriteLine(StringConstants.Comma);
       
-      
-      
       writer.Write(type);
       writer.Write(" ");
       writer.Write(name);

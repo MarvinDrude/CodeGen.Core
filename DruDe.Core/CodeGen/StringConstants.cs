@@ -9,6 +9,7 @@ public static class StringConstants
    
    public static ReadOnlySpan<char> OpenCurlyBracket => "{".AsSpan();
    public static ReadOnlySpan<char> CloseCurlyBracket => "}".AsSpan();
+   public static ReadOnlySpan<char> CloseCurlyBracketSemicolon => "};".AsSpan();
    
    public static ReadOnlySpan<char> OpenParenthese => "(".AsSpan();
    public static ReadOnlySpan<char> CloseParenthese => ")".AsSpan();

@@ -54,6 +54,12 @@ public ref struct BufferWriter<T> : IDisposable
    }
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public void Fill(T value)
+   {
+      _owner.Span.Fill(value);
+   }
+   
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void Add(ref T reference)
    {
       Add() = reference;
