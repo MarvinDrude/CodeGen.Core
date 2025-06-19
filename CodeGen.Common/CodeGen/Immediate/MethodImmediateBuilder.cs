@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace DruDe.Core.CodeGen.Immediate;
+namespace CodeGen.Common.CodeGen.Immediate;
 
 [StructLayout(LayoutKind.Sequential)]
 public readonly ref struct MethodImmediateBuilder : IImmediateBuilder

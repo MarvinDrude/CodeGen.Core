@@ -1,10 +1,9 @@
 ﻿
 using BenchmarkDotNet.Running;
-using DruDe.Core.Buffers;
-using DruDe.Core.CodeGen;
-using DruDe.Core.CodeGen.Immediate;
-using DruDe.Core.Perfs.Buffers;
-using DruDe.Core.Perfs.CodeGen;
+using CodeGen.Common.Buffers;
+using CodeGen.Common.CodeGen;
+using CodeGen.Common.CodeGen.Immediate;
+using CodeGen.Core.Perfs.CodeGen;
 
 // for (var e = 0; e < 10_000; e++)
 // {

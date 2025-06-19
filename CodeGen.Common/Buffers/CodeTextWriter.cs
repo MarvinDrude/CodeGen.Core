@@ -1,8 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using DruDe.Core.CodeGen;
+using CodeGen.Common.CodeGen;
 
-namespace DruDe.Core.Buffers;
+namespace CodeGen.Common.Buffers;
 
 [StructLayout(LayoutKind.Sequential)]
 public ref struct CodeTextWriter : IDisposable

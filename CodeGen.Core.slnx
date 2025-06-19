@@ -1,0 +1,10 @@
+﻿<Solution>
+  <Folder Name="/Perfs/">
+    <Project Path="CodeGen.Core.Perfs\CodeGen.Core.Perfs.csproj" Type="Classic C#" />
+    <Project Path="OldCodeWriter\OldCodeWriter.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="CodeGen.Core.Tests\CodeGen.Core.Tests.csproj" Type="Classic C#" />
+  </Folder>
+  <Project Path="CodeGen.Common\CodeGen.Common.csproj" Type="Classic C#" />
+</Solution>

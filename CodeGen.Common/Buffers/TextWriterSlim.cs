@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace DruDe.Core.Buffers;
+namespace CodeGen.Common.Buffers;
 
 [StructLayout(LayoutKind.Auto)]
 public ref struct TextWriterSlim : IDisposable

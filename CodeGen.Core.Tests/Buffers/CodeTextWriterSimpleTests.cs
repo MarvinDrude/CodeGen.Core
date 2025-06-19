@@ -1,6 +1,9 @@
-﻿using DruDe.Core.Buffers;
+﻿using CodeGen.Common.Buffers;
+using TUnit.Assertions;
+using TUnit.Assertions.Extensions;
+using TUnit.Core;
 
-namespace DruDe.Core.Tests.Buffers;
+namespace CodeGen.Core.Tests.Buffers;
 
 public class CodeTextWriterSimpleTests
 {

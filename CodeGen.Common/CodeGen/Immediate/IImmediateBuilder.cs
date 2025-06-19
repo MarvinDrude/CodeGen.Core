@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace DruDe.Core.CodeGen.Immediate;
+namespace CodeGen.Common.CodeGen.Immediate;
 
 public interface IImmediateBuilder
 {

@@ -13,7 +13,7 @@
    </ItemGroup>
 
    <ItemGroup>
-     <ProjectReference Include="..\DruDe.Core\DruDe.Core.csproj" />
+     <ProjectReference Include="..\CodeGen.Common\CodeGen.Common.csproj" />
      <ProjectReference Include="..\OldCodeWriter\OldCodeWriter.csproj" />
    </ItemGroup>
 

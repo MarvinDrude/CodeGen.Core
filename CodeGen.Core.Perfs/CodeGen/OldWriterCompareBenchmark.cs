@@ -1,10 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
-using DruDe.Core.CodeGen;
-using DruDe.Core.CodeGen.Immediate;
+using CodeGen.Common.CodeGen;
+using CodeGen.Common.CodeGen.Immediate;
 using OldCodeWriter;
 
-namespace DruDe.Core.Perfs.CodeGen;
+namespace CodeGen.Core.Perfs.CodeGen;
 
 [SimpleJob(RunStrategy.Throughput, iterationCount: 6)]
 [MinColumn, MaxColumn, MeanColumn, MedianColumn, MemoryDiagnoser]

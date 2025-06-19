@@ -1,7 +1,7 @@
 ﻿using System.Buffers;
 using System.Runtime.InteropServices;
 
-namespace DruDe.Core.Buffers;
+namespace CodeGen.Common.Buffers;
 
 [StructLayout(LayoutKind.Auto)]
 public readonly ref struct BufferOwner<T> : IDisposable

@@ -1,11 +1,11 @@
 ﻿using System.Text;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
-using DruDe.Core.Buffers;
-using DruDe.Core.CodeGen;
-using DruDe.Core.CodeGen.Immediate;
+using CodeGen.Common.Buffers;
+using CodeGen.Common.CodeGen;
+using CodeGen.Common.CodeGen.Immediate;
 
-namespace DruDe.Core.Perfs.Buffers;
+namespace CodeGen.Core.Perfs.Buffers;
 
 [SimpleJob(RunStrategy.Throughput, iterationCount: 2)]
 [MinColumn, MaxColumn, MeanColumn, MedianColumn, MemoryDiagnoser]

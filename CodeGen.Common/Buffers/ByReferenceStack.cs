@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace DruDe.Core.Buffers;
+namespace CodeGen.Common.Buffers;
 
 /// <summary>
 /// Use this only if you really know what you want to do with it.

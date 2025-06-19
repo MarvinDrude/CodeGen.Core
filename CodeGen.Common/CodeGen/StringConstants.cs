@@ -1,4 +1,4 @@
-﻿namespace DruDe.Core.CodeGen;
+﻿namespace CodeGen.Common.CodeGen;
 
 public static class StringConstants
 {

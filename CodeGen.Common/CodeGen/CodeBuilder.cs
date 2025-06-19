@@ -1,9 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using DruDe.Core.Buffers;
-using DruDe.Core.CodeGen.Immediate;
+using CodeGen.Common.Buffers;
+using CodeGen.Common.CodeGen.Immediate;
 
-namespace DruDe.Core.CodeGen;
+namespace CodeGen.Common.CodeGen;
 
 [StructLayout(LayoutKind.Sequential)]
 public ref struct CodeBuilder : IDisposable

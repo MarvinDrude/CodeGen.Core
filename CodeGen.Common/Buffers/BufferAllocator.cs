@@ -1,6 +1,6 @@
 ﻿using System.Buffers;
 
-namespace DruDe.Core.Buffers;
+namespace CodeGen.Common.Buffers;
 
 public static class BufferAllocator<T>
 {
