@@ -28,6 +28,11 @@ public ref struct CodeBuilder : IDisposable
       NameSpaceIm = new NameSpaceImmediateBuilder(ref Unsafe.AsRef(ref this));
       ClassIm = new ClassImmediateBuilder(ref Unsafe.AsRef(ref this));
    }
+
+   public override string ToString()
+   {
+      return Writer.ToString();
+   }
    
    public void Dispose()
    {

@@ -34,6 +34,14 @@ public static class ImmediateBuilderExtensions
    }
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ref T WriteLine<T>(this ref T self)
+      where T : struct, IImmediateBuilder, allows ref struct
+   {
+      self.Builder.Writer.WriteLine();
+      return ref self;
+   }
+   
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref T Write<T>(this ref T self, scoped ReadOnlySpan<char> text, bool multiLine = false)
       where T : struct, IImmediateBuilder, allows ref struct
    {
