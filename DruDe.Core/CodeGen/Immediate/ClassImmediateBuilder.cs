@@ -21,6 +21,7 @@ public readonly ref struct ClassImmediateBuilder : IImmediateBuilder
 
 public static class ClassImmediateBuilderExtensions
 {
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref ClassImmediateBuilder OpenHeader(
       this ref ClassImmediateBuilder self, scoped ReadOnlySpan<char> declaration)
    {
@@ -30,22 +31,24 @@ public static class ClassImmediateBuilderExtensions
       return ref self;
    }
    
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref ClassImmediateBuilder CloseHeader(
       this ref ClassImmediateBuilder self)
    {
       ref var writer = ref self.Builder.Writer;
 
-      writer.WriteLine("{");
+      writer.WriteLine(StringConstants.OpenCurlyBracket);
       writer.UpIndent();
       
       return ref self;
    }
    
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref ClassImmediateBuilder FirstBaseDeclaration(
       this ref ClassImmediateBuilder self, scoped ReadOnlySpan<char> name, bool close = false)
    {
       ref var writer = ref self.Builder.Writer;
-      ReadOnlySpan<char> start = ": ";
+      var start = StringConstants.ColonSpace;
       
       writer.UpIndent();
       writer.Write(start);
@@ -58,13 +61,14 @@ public static class ClassImmediateBuilderExtensions
       return ref self;
    }
    
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref ClassImmediateBuilder NextBaseDeclaration(
       this ref ClassImmediateBuilder self, scoped ReadOnlySpan<char> name, bool close = false)
    {
       ref var writer = ref self.Builder.Writer;
-      ReadOnlySpan<char> space = "  ";
+      var space = StringConstants.TwoSpace;
       
-      writer.WriteLine(",");
+      writer.WriteLine(StringConstants.Comma);
       writer.Write(space);
       writer.Write(name);
       
@@ -75,6 +79,7 @@ public static class ClassImmediateBuilderExtensions
       return ref self;
    }
    
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref ClassImmediateBuilder CloseBaseDeclaration(
       this ref ClassImmediateBuilder self)
    {
@@ -86,6 +91,7 @@ public static class ClassImmediateBuilderExtensions
       return ref self;
    }
    
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref ClassImmediateBuilder FirstGenericConstraint(
       this ref ClassImmediateBuilder self, scoped ReadOnlySpan<char> constraint)
    {
@@ -97,6 +103,7 @@ public static class ClassImmediateBuilderExtensions
       return ref self;
    }
    
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref ClassImmediateBuilder NextGenericConstraint(
       this ref ClassImmediateBuilder self, scoped ReadOnlySpan<char> constraint)
    {
@@ -107,6 +114,7 @@ public static class ClassImmediateBuilderExtensions
       return ref self;
    }
    
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref ClassImmediateBuilder CloseGenericConstraint(
       this ref ClassImmediateBuilder self)
    {

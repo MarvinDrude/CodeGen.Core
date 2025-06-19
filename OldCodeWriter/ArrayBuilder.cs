@@ -1,4 +1,6 @@
-﻿namespace OldCodeWriter;
+﻿using System.Buffers;
+
+namespace OldCodeWriter;
 
 internal struct ArrayBuilder<T> : IDisposable
 {

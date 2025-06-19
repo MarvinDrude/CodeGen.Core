@@ -21,6 +21,7 @@ public readonly ref struct MethodImmediateBuilder : IImmediateBuilder
 
 public static class MethodImmediateBuilderExtensions
 {
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref MethodImmediateBuilder OpenHeader(
       this ref MethodImmediateBuilder self,
       scoped ReadOnlySpan<char> modifiers,
@@ -54,29 +55,32 @@ public static class MethodImmediateBuilderExtensions
       else
       {
          writer.Write(modifiers);
-         writer.Write(" ");
+         writer.Write(StringConstants.Space);
          writer.Write(returnType);
-         writer.Write(" ");
+         writer.Write(StringConstants.Space);
          writer.Write(name);
       }
       
       if (hasParameters)
       {
-         writer.WriteLine("(");
+         writer.WriteLine(StringConstants.OpenParenthese);
       }
       else
       {
-         writer.Write("(");
+         writer.Write(StringConstants.OpenParenthese);
       }
       
       return ref self;
    }
    
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref MethodImmediateBuilder CloseHeader(
       this ref MethodImmediateBuilder self, bool semicolon = false)
    {
       ref var writer = ref self.Builder.Writer;
-      writer.WriteLine(!semicolon ? ")" : ");");
+      writer.WriteLine(!semicolon 
+         ? StringConstants.CloseParenthese 
+         : StringConstants.CloseParentheseSemicolon);
 
       if (!semicolon)
       {
@@ -86,38 +90,64 @@ public static class MethodImmediateBuilderExtensions
       return ref self;
    }
    
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref MethodImmediateBuilder CloseHeaderNoParameters(
       this ref MethodImmediateBuilder self, bool semicolon = false)
    {
       ref var writer = ref self.Builder.Writer;
-      writer.WriteLine(!semicolon ? ")" : ");");
+      writer.WriteLine(!semicolon 
+         ? StringConstants.CloseParenthese 
+         : StringConstants.CloseParentheseSemicolon);
 
       return ref self;
    }
 
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref MethodImmediateBuilder FirstParameter(
       this ref MethodImmediateBuilder self,
       scoped ReadOnlySpan<char> type,
       scoped ReadOnlySpan<char> name)
    {
       ref var writer = ref self.Builder.Writer;
-      
       writer.UpIndent();
-      writer.Write(type);
-      writer.Write(" ");
-      writer.Write(name);
+      
+      var totalSize = type.Length + name.Length + 1;
+
+      if (totalSize <= 1024)
+      {
+         Span<char> buffer = stackalloc char[totalSize];
+         var completeBuffer = buffer;
+         
+         type.CopyTo(buffer);
+         buffer = buffer[type.Length..];
+         
+         buffer[0] = ' ';
+         buffer = buffer[1..];
+         
+         name.CopyTo(buffer);
+         writer.Write(completeBuffer);
+      }
+      else
+      {
+         writer.Write(type);
+         writer.Write(StringConstants.Space);
+         writer.Write(name);
+      }
       
       return ref self;
    }
    
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref MethodImmediateBuilder NextParameter(
       this ref MethodImmediateBuilder self,
       scoped ReadOnlySpan<char> type,
       scoped ReadOnlySpan<char> name)
    {
       ref var writer = ref self.Builder.Writer;
+      writer.WriteLine(StringConstants.Comma);
       
-      writer.WriteLine(",");
+      
+      
       writer.Write(type);
       writer.Write(" ");
       writer.Write(name);
