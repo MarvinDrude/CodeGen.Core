@@ -36,13 +36,13 @@ public ref struct CodeTextWriter : IDisposable
       _indentCount = indentCount;
       
       _newLineCharacter = newLineCharacter;
-      _buffer = new BufferWriter<char>(buffer, 1024);
+      _buffer = new BufferWriter<char>(buffer, 400);
       
       _currentLevel = 0;
       _indentCache = new BufferWriter<char>(indentBuffer);
       for (var e = 0; e < indentBuffer.Length; e++)
       {
-         _indentCache.Add(_indentCharacter);
+         _indentCache.Add(ref _indentCharacter);
       }
    }
 

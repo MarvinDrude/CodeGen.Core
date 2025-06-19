@@ -1,6 +1,7 @@
 ﻿<Solution>
   <Folder Name="/Perfs/">
     <Project Path="DruDe.Core.Perfs\DruDe.Core.Perfs.csproj" Type="Classic C#" />
+    <Project Path="OldCodeWriter\OldCodeWriter.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="DruDe.Core.Tests\DruDe.Core.Tests.csproj" Type="Classic C#" />

@@ -29,13 +29,37 @@ public static class MethodImmediateBuilderExtensions
       bool hasParameters = true)
    {
       ref var writer = ref self.Builder.Writer;
+      var totalSize = modifiers.Length + name.Length + returnType.Length + 2;
 
-      writer.Write(modifiers);
-      writer.Write(" ");
-      writer.Write(returnType);
-      writer.Write(" ");
-      writer.Write(name);
+      if (totalSize <= 1024)
+      {
+         Span<char> buffer = stackalloc char[totalSize];
+         var completeBuffer = buffer;
+         
+         modifiers.CopyTo(buffer);
+         buffer = buffer[modifiers.Length..];
 
+         buffer[0] = ' ';
+         buffer = buffer[1..];
+         
+         returnType.CopyTo(buffer);
+         buffer = buffer[returnType.Length..];
+         
+         buffer[0] = ' ';
+         buffer = buffer[1..];
+         
+         name.CopyTo(buffer);
+         writer.Write(completeBuffer);
+      }
+      else
+      {
+         writer.Write(modifiers);
+         writer.Write(" ");
+         writer.Write(returnType);
+         writer.Write(" ");
+         writer.Write(name);
+      }
+      
       if (hasParameters)
       {
          writer.WriteLine("(");
