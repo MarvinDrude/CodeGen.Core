@@ -16,6 +16,8 @@ public ref struct CodeBuilder : IDisposable
    public MethodImmediateBuilder MethodIm;
 
    public NameSpaceStateBuilder NameSpace;
+   public ClassStateBuilder Class;
+   public MethodStateBuilder Method;
 
    public CodeBuilder(
       Span<char> buffer,
@@ -34,10 +36,11 @@ public ref struct CodeBuilder : IDisposable
       ClassIm = new ClassImmediateBuilder(ref Unsafe.AsRef(ref this));
       MethodIm = new MethodImmediateBuilder(ref Unsafe.AsRef(ref this));
 
-      if (enableStateBuilders)
-      {
-         NameSpace = new NameSpaceStateBuilder(ref Unsafe.AsRef(ref this));
-      }
+      if (!enableStateBuilders) return;
+      
+      NameSpace = new NameSpaceStateBuilder(ref Unsafe.AsRef(ref this));
+      Class = new ClassStateBuilder(ref Unsafe.AsRef(ref this));
+      Method = new MethodStateBuilder(ref Unsafe.AsRef(ref this));
    }
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]

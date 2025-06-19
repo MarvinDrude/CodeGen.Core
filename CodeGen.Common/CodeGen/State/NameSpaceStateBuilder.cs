@@ -59,6 +59,7 @@ public ref struct NameSpaceStateBuilder : IStateBuilder
       if (Path.Length > 0)
       {
          Builder.NameSpaceIm.Set(Path.Span);
+         Builder.Writer.WriteLine();
       }
       
       if(reset) Reset();
