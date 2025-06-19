@@ -12,6 +12,7 @@ public ref struct CodeBuilder : IDisposable
    
    public NameSpaceImmediateBuilder NameSpaceIm;
    public ClassImmediateBuilder ClassIm;
+   public MethodImmediateBuilder MethodIm;
 
    public CodeBuilder(
       Span<char> buffer,
@@ -27,6 +28,7 @@ public ref struct CodeBuilder : IDisposable
       
       NameSpaceIm = new NameSpaceImmediateBuilder(ref Unsafe.AsRef(ref this));
       ClassIm = new ClassImmediateBuilder(ref Unsafe.AsRef(ref this));
+      MethodIm = new MethodImmediateBuilder(ref Unsafe.AsRef(ref this));
    }
 
    public override string ToString()

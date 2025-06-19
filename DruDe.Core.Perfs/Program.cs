@@ -57,7 +57,13 @@ void Test()
             .NextGenericConstraint("where E : struct, new()")
             .CloseGenericConstraint()
          .CloseHeader()
-            .WriteLine("Wwww")
+         .Done()
+         .MethodIm.OpenHeader("public", "void", "TestMethod")
+            .FirstParameter("string", "name")
+         .CloseHeader()
+         .OpenBody()
+            .WriteLine("Console.WriteLine(name);")
+         .CloseBody()
          .CloseBody();
       
       var str = builder.ToString();

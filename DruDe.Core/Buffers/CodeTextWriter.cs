@@ -36,7 +36,7 @@ public ref struct CodeTextWriter : IDisposable
       _indentCount = indentCount;
       
       _newLineCharacter = newLineCharacter;
-      _buffer = new BufferWriter<char>(buffer);
+      _buffer = new BufferWriter<char>(buffer, 1024);
       
       _currentLevel = 0;
       _indentCache = new BufferWriter<char>(indentBuffer);

@@ -46,14 +46,16 @@ public static class NameSpaceImmediateBuilderExtensions
       ArgumentOutOfRangeException.ThrowIfGreaterThan(nameSpace.Length, 1024 - 7, nameof(nameSpace));
       Span<char> buffer = stackalloc char[nameSpace.Length + 7]; // using + ;
       ReadOnlySpan<char> usingBuffer = "using ";
-   
+
+      var result = buffer;
+      
       usingBuffer.CopyTo(buffer);
       buffer = buffer[6..];
    
       nameSpace.CopyTo(buffer);
       buffer[^1] = ';';
    
-      self.Builder.Writer.WriteLine(buffer);
+      self.Builder.Writer.WriteLine(result);
       return ref self;
    }
 
