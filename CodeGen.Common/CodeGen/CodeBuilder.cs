@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using CodeGen.Common.Buffers;
 using CodeGen.Common.CodeGen.Immediate;
+using CodeGen.Common.CodeGen.State;
 
 namespace CodeGen.Common.CodeGen;
 
@@ -14,12 +15,15 @@ public ref struct CodeBuilder : IDisposable
    public ClassImmediateBuilder ClassIm;
    public MethodImmediateBuilder MethodIm;
 
+   public NameSpaceStateBuilder NameSpace;
+
    public CodeBuilder(
       Span<char> buffer,
       Span<char> indentBuffer,
       int indentCount = 3,
       char indentCharacter = ' ',
-      char newLineCharacter = '\n')
+      char newLineCharacter = '\n',
+      bool enableStateBuilders = true)
    {
       Writer = new CodeTextWriter(
          buffer, indentBuffer, 
@@ -29,6 +33,11 @@ public ref struct CodeBuilder : IDisposable
       NameSpaceIm = new NameSpaceImmediateBuilder(ref Unsafe.AsRef(ref this));
       ClassIm = new ClassImmediateBuilder(ref Unsafe.AsRef(ref this));
       MethodIm = new MethodImmediateBuilder(ref Unsafe.AsRef(ref this));
+
+      if (enableStateBuilders)
+      {
+         NameSpace = new NameSpaceStateBuilder(ref Unsafe.AsRef(ref this));
+      }
    }
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]

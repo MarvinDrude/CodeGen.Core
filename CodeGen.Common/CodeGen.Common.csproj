@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="CodeGen\Models\Classes\" />
+    <Folder Include="CodeGen\Models\Methods\" />
+    <Folder Include="CodeGen\Models\NameSpaces\" />
+  </ItemGroup>
+
 </Project>

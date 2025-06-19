@@ -16,7 +16,7 @@ public class OldWriterCompareBenchmark
       var builder = new CodeBuilder(
          stackalloc char[1024],
          stackalloc char[6],
-         1, '\t');
+         1, '\t', enableStateBuilders: false);
       
       builder.NameSpaceIm
          .EnableNullable()
@@ -152,7 +152,7 @@ public class OldWriterCompareBenchmark
       var builder = new CodeBuilder(
          stackalloc char[1024],
          stackalloc char[6],
-         1, '\t');
+         1, '\t', enableStateBuilders: false);
       
       builder.NameSpaceIm
          .EnableNullable()
@@ -288,7 +288,7 @@ public class OldWriterCompareBenchmark
       var builder = new CodeBuilder(
          stackalloc char[32],
          stackalloc char[6],
-         1, '\t');
+         1, '\t', enableStateBuilders: false);
       
       builder.NameSpaceIm
          .EnableNullable()
@@ -358,7 +358,7 @@ public class OldWriterCompareBenchmark
       var builder = new CodeBuilder(
          stackalloc char[32],
          stackalloc char[6],
-         1, '\t');
+         1, '\t', enableStateBuilders: false);
       
       builder.NameSpaceIm
          .EnableNullable()
@@ -417,8 +417,30 @@ public class OldWriterCompareBenchmark
          .OpenHeader("public abstract", "void", "AbstractMethod", false)
          .CloseHeaderNoParameters(true)
          .CloseBody();
-
+      
       builder.Dispose();
       return builder.ToString();
+   }
+   
+   [Benchmark]
+   public char NewWriterStatefulNoArrayPoolNeededNoStringResult()
+   {
+      var builder = new CodeBuilder(
+         stackalloc char[1024],
+         stackalloc char[6],
+         1, '\t');
+
+      builder.NameSpace.Usings = [
+         "System.Test",
+         "System.A",
+         "System.B"
+      ];
+      builder.NameSpace.Path = "Your.NameSpace.Path";
+      builder.NameSpace.Render();
+      
+      
+      
+      builder.Dispose();
+      return builder.Writer.WrittenSpan[2];
    }
 }
