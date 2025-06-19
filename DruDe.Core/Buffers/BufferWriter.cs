@@ -132,7 +132,7 @@ public ref struct BufferWriter<T> : IDisposable
       int newLength;
       if (!_isGrown && _initialMinGrowCapacity >= requestedLength)
       {
-         newLength = _initialMinGrowCapacity;
+         newLength = _owner.Length + _initialMinGrowCapacity;
       }
       else
       {
