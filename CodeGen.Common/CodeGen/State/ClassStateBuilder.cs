@@ -17,6 +17,7 @@ public ref struct ClassStateBuilder : IStateBuilder
 
    public RefStringView Declaration;
    public Span<string> BaseDeclarations;
+   public Span<string> GenericConstraints;
 
    public ClassStateBuilder(ref CodeBuilder builder)
    {
@@ -32,7 +33,7 @@ public ref struct ClassStateBuilder : IStateBuilder
       {
          for (var e = 0; e < BaseDeclarations.Length; e++)
          {
-            var baseDeclaration = BaseDeclarations[e];
+            ref var baseDeclaration = ref BaseDeclarations[e];
             
             if (e == 0)
             {
@@ -46,6 +47,24 @@ public ref struct ClassStateBuilder : IStateBuilder
          Builder.ClassIm.CloseBaseDeclaration();
       }
 
+      if (GenericConstraints.Length > 0)
+      {
+         for (var e = 0; e < GenericConstraints.Length; e++)
+         {
+            ref var genericConstraint = ref GenericConstraints[e];
+
+            if (e == 0)
+            {
+               Builder.ClassIm.FirstGenericConstraint(genericConstraint);
+               continue;
+            }
+
+            Builder.ClassIm.NextGenericConstraint(genericConstraint);
+         }
+
+         Builder.ClassIm.CloseGenericConstraint();
+      }
+
       Builder.ClassIm.CloseHeader();
       
       if(reset) ResetDeclaration();
@@ -55,6 +74,7 @@ public ref struct ClassStateBuilder : IStateBuilder
    {
       Declaration = "public class Test";
       BaseDeclarations = [];
+      GenericConstraints = [];
    }
 }
 
