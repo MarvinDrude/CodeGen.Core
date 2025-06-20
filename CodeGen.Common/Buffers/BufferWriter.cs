@@ -87,42 +87,42 @@ public ref struct BufferWriter<T> : IDisposable
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void Add(ref T reference)
    {
-      Add() = reference;
+      if (_owner.Length - _position < 1)
+      {
+         ResizeSpan(1);
+      }
+
+      ref var refr = ref MemoryMarshal.GetReference(_owner.Span);
+      Unsafe.Add(ref refr, _position++) = reference;
    }
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void Add(T value)
    {
-      Add() = value;
-   }
+      if (_owner.Length - _position < 1)
+      {
+         ResizeSpan(1);
+      }
 
-   [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   private ref T Add()
-   {
-      ref var temp = ref MemoryMarshal.GetReference(AcquireSpan(1));
-      _position++;
-      return ref temp;
-   }
-   
-   [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public void Write(scoped in T value)
-   {
-      AcquireSpan(1)[0] = value;
-      _position++;
+      ref var reference = ref MemoryMarshal.GetReference(_owner.Span);
+      Unsafe.Add(ref reference, _position++) = value;
    }
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void Write(scoped ReadOnlySpan<T> span)
    {
-      var dest = FreeCapacity >= span.Length ? 
-         _owner.Span : AcquireSpan(span.Length);
+      if (_owner.Length - _position < span.Length)
+      {
+         ResizeSpan(span.Length);
+      }
       
       ref var srcBase = ref Unsafe.As<T, byte>(ref MemoryMarshal.GetReference(span));
-      ref var destBase = ref Unsafe.As<T, byte>(ref MemoryMarshal.GetReference(dest));
+      ref var destBase = ref Unsafe.As<T, byte>(ref MemoryMarshal.GetReference(_owner.Span));
 
       var sizeOf = Unsafe.SizeOf<T>();
       var byteCount = (uint)(span.Length * sizeOf);
       
+      // slightly faster than _owner.Span[_position..] + CopyTo 
       Unsafe.CopyBlockUnaligned(
          ref Unsafe.AddByteOffset(ref destBase, (nint)(_position * sizeOf)),
          ref srcBase,
@@ -131,11 +131,11 @@ public ref struct BufferWriter<T> : IDisposable
       _position += span.Length;
    }
    
-   private Span<T> AcquireSpan(int requestedLength)
+   private void ResizeSpan(int requestedLength)
    {
-      if (FreeCapacity >= requestedLength)
+      if (_owner.Length - _position >= requestedLength)
       {
-         return _owner.Span[_position..];
+         return;
       }
 
       int newLength;
@@ -156,7 +156,6 @@ public ref struct BufferWriter<T> : IDisposable
       lastOwner.Dispose();
       
       _isGrown = true;
-      return _owner.Span[_position..];
    }
 
    public void Dispose()

@@ -25,12 +25,13 @@ public ref struct CodeBuilder : IDisposable
       int indentCount = 3,
       char indentCharacter = ' ',
       char newLineCharacter = '\n',
-      bool enableStateBuilders = true)
+      bool enableStateBuilders = true,
+      int initialMinGrowCapacity = 1024)
    {
       Writer = new CodeTextWriter(
          buffer, indentBuffer, 
          indentCount, indentCharacter,
-         newLineCharacter);
+         newLineCharacter, initialMinGrowCapacity);
       
       NameSpaceIm = new NameSpaceImmediateBuilder(ref Unsafe.AsRef(ref this));
       ClassIm = new ClassImmediateBuilder(ref Unsafe.AsRef(ref this));

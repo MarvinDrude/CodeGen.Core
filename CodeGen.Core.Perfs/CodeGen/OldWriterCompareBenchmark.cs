@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using CodeGen.Common.CodeGen;
 using CodeGen.Common.CodeGen.Immediate;
@@ -111,9 +110,11 @@ public class OldWriterCompareBenchmark
       builder.Method.RenderHeader();
       
       builder.Writer.CloseBody();
-      
+
+      var cha = builder.Writer.WrittenSpan[2];
       builder.Dispose();
-      return builder.Writer.WrittenSpan[2];
+      
+      return cha;
    }
    
    [Benchmark]
@@ -122,7 +123,8 @@ public class OldWriterCompareBenchmark
       var builder = new CodeBuilder(
          stackalloc char[1024],
          stackalloc char[6],
-         1, '\t', enableStateBuilders: false);
+         1, '\t', 
+         enableStateBuilders: false);
       
       builder.NameSpaceIm
          .EnableNullable()
@@ -182,8 +184,10 @@ public class OldWriterCompareBenchmark
          .CloseHeaderNoParameters(true)
          .CloseBody();
 
+      var cha = builder.Writer.WrittenSpan[2];
       builder.Dispose();
-      return builder.Writer.WrittenSpan[2];
+      
+      return cha;
    }
    
    [Benchmark]
@@ -258,7 +262,8 @@ public class OldWriterCompareBenchmark
       var builder = new CodeBuilder(
          stackalloc char[1024],
          stackalloc char[6],
-         1, '\t', enableStateBuilders: false);
+         1, '\t', 
+         enableStateBuilders: false);
       
       builder.NameSpaceIm
          .EnableNullable()
@@ -318,8 +323,10 @@ public class OldWriterCompareBenchmark
             .CloseHeaderNoParameters(true)
          .CloseBody();
 
+      var str = builder.ToString();
       builder.Dispose();
-      return builder.ToString();
+      
+      return str;
    }
 
    [Benchmark]
@@ -394,7 +401,9 @@ public class OldWriterCompareBenchmark
       var builder = new CodeBuilder(
          stackalloc char[32],
          stackalloc char[6],
-         1, '\t', enableStateBuilders: false);
+         1, '\t', 
+         enableStateBuilders: false,
+         initialMinGrowCapacity: 580);
       
       builder.NameSpaceIm
          .EnableNullable()
@@ -454,8 +463,10 @@ public class OldWriterCompareBenchmark
          .CloseHeaderNoParameters(true)
          .CloseBody();
 
+      var cha = builder.Writer.WrittenSpan[2];
       builder.Dispose();
-      return builder.Writer.WrittenSpan[2];
+      
+      return cha;
    }
    
    [Benchmark]
@@ -464,7 +475,9 @@ public class OldWriterCompareBenchmark
       var builder = new CodeBuilder(
          stackalloc char[32],
          stackalloc char[6],
-         1, '\t', enableStateBuilders: false);
+         1, '\t', 
+         enableStateBuilders: false,
+         initialMinGrowCapacity: 580);
       
       builder.NameSpaceIm
          .EnableNullable()
@@ -523,9 +536,11 @@ public class OldWriterCompareBenchmark
          .OpenHeader("public abstract", "void", "AbstractMethod", false)
          .CloseHeaderNoParameters(true)
          .CloseBody();
+      
+      var str = builder.ToString();
       
       builder.Dispose();
-      return builder.ToString();
+      return str;
    }
    
 }

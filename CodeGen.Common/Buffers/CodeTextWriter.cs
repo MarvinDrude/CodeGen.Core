@@ -56,13 +56,14 @@ public ref struct CodeTextWriter : IDisposable
       Span<char> indentBuffer,
       int indentCount = 1,
       char indentCharacter = DefaultIndent,
-      char newLineCharacter = DefaultNewLine)
+      char newLineCharacter = DefaultNewLine,
+      int initialMinGrowCapacity = 1024)
    {
       _indentCharacter = indentCharacter;
       _indentCount = indentCount;
       
       _newLineCharacter = newLineCharacter;
-      _buffer = new BufferWriter<char>(buffer, 400);
+      _buffer = new BufferWriter<char>(buffer, initialMinGrowCapacity);
       _lastChar = '\0';
       
       _currentLevel = 0;
