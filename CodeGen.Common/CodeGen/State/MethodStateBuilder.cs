@@ -23,6 +23,7 @@ public ref struct MethodStateBuilder : IStateBuilder
    public bool IsOnlyHeader;
    
    public Span<MethodParameter> Parameters;
+   public Span<string> GenericConstraints;
 
    public MethodStateBuilder(ref CodeBuilder builder)
    {
@@ -52,11 +53,30 @@ public ref struct MethodStateBuilder : IStateBuilder
 
       if (Parameters.Length > 0)
       {
-         Builder.MethodIm.CloseHeader(IsOnlyHeader);
+         Builder.MethodIm.CloseHeader(IsOnlyHeader && GenericConstraints.Length == 0);
       }
       else
       {
-         Builder.MethodIm.CloseHeaderNoParameters(IsOnlyHeader);
+         Builder.MethodIm.CloseHeaderNoParameters(IsOnlyHeader && GenericConstraints.Length == 0);
+      }
+
+      if (GenericConstraints.Length > 0)
+      {
+         for (var e = 0; e < GenericConstraints.Length; e++)
+         {
+            ref var genericConstraint = ref GenericConstraints[e];
+            var semicolon = e == GenericConstraints.Length - 1 && IsOnlyHeader;
+            
+            if (e != 0)
+            {
+               Builder.MethodIm.NextGenericConstraint(genericConstraint, semicolon);
+               continue;
+            }
+            
+            Builder.MethodIm.FirstGenericConstraint(genericConstraint, semicolon);
+         }
+
+         Builder.Writer.DownIndent();
       }
       
       if(reset) ResetHeader();
@@ -70,6 +90,7 @@ public ref struct MethodStateBuilder : IStateBuilder
       
       IsOnlyHeader = false;
       Parameters = [];
+      GenericConstraints = [];
    }
 }
 

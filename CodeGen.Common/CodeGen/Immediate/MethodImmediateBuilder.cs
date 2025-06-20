@@ -152,11 +152,83 @@ public static class MethodImmediateBuilderExtensions
       scoped ReadOnlySpan<char> name)
    {
       ref var writer = ref self.Builder.Writer;
-      writer.WriteLine(StringConstants.Comma);
       
-      writer.Write(type);
-      writer.Write(" ");
-      writer.Write(name);
+      var totalSize = type.Length + name.Length + 3 + writer.IndentCount * writer.CurrentIndentLevel;
+
+      if (totalSize <= 1024)
+      {
+         Span<char> buffer = stackalloc char[totalSize];
+         var completeBuffer = buffer;
+
+         buffer[0] = ',';
+         buffer[1] = writer.NewLineCharacter;
+         buffer = buffer[2..];
+         
+         var indent = writer.GetCurrentIndentBuffer();
+         indent.CopyTo(buffer);
+         buffer = buffer[indent.Length..];
+         
+         type.CopyTo(buffer);
+         buffer = buffer[type.Length..];
+         
+         buffer[0] = ' ';
+         buffer = buffer[1..];
+         
+         name.CopyTo(buffer);
+         
+         writer.Write(completeBuffer);
+      }
+      else
+      {
+         writer.WriteLine(StringConstants.Comma);
+      
+         writer.Write(type);
+         writer.Write(" ");
+         writer.Write(name);
+      }
+      
+      return ref self;
+   }
+
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ref MethodImmediateBuilder FirstGenericConstraint(
+      this ref MethodImmediateBuilder self,
+      scoped ReadOnlySpan<char> genericConstraint,
+      bool semicolon = false)
+   {
+      ref var writer = ref self.Builder.Writer;
+      writer.UpIndent();
+
+      if (semicolon)
+      {
+         writer.Write(genericConstraint);
+         writer.WriteLine(StringConstants.Semicolon);
+      }
+      else
+      {
+         writer.WriteLine(genericConstraint);
+      }
+      
+      return ref self;
+   }
+   
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ref MethodImmediateBuilder NextGenericConstraint(
+      this ref MethodImmediateBuilder self,
+      scoped ReadOnlySpan<char> genericConstraint,
+      bool semicolon = false)
+   {
+      ref var writer = ref self.Builder.Writer;
+      
+      if (semicolon)
+      {
+         writer.Write(genericConstraint);
+         writer.WriteLine(StringConstants.Semicolon);
+      }
+      else
+      {
+         writer.WriteLine(genericConstraint);
+      }
       
       return ref self;
    }
