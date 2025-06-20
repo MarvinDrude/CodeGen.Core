@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Buffers;
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using CodeGen.Common.CodeGen;
 using CodeGen.Common.CodeGen.Immediate;

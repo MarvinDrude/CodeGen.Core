@@ -114,10 +114,19 @@ public ref struct BufferWriter<T> : IDisposable
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void Write(scoped ReadOnlySpan<T> span)
    {
-      span.CopyTo(
-         FreeCapacity >= span.Length 
-            ? _owner.Span[_position..] 
-            : AcquireSpan(span.Length));
+      var dest = FreeCapacity >= span.Length ? 
+         _owner.Span : AcquireSpan(span.Length);
+      
+      ref var srcBase = ref Unsafe.As<T, byte>(ref MemoryMarshal.GetReference(span));
+      ref var destBase = ref Unsafe.As<T, byte>(ref MemoryMarshal.GetReference(dest));
+
+      var sizeOf = Unsafe.SizeOf<T>();
+      var byteCount = (uint)(span.Length * sizeOf);
+      
+      Unsafe.CopyBlockUnaligned(
+         ref Unsafe.AddByteOffset(ref destBase, (nint)(_position * sizeOf)),
+         ref srcBase,
+         byteCount);
 
       _position += span.Length;
    }

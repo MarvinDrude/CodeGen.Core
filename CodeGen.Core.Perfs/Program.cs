@@ -6,13 +6,13 @@ using CodeGen.Common.CodeGen.Immediate;
 using CodeGen.Common.CodeGen.Models.Methods;
 using CodeGen.Core.Perfs.CodeGen;
 
-// for (var e = 0; e < 10_000; e++)
-// {
-//    new OldWriterCompareBenchmark().NewWriterStatefulNoArrayPoolNeededNoStringResult();
-// }
+for (var e = 0; e < 10_000; e++)
+{
+   new OldWriterCompareBenchmark().NewWriterNoArrayPoolNeededNoToStringResult();
+}
 
 #if RELEASE
-BenchmarkRunner.Run<OldWriterCompareBenchmark>();
+//BenchmarkRunner.Run<OldWriterCompareBenchmark>();
 #else
 
 var builder = new CodeBuilder(
