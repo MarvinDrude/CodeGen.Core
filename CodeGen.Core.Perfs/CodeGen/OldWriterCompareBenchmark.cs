@@ -37,7 +37,7 @@ public class OldWriterCompareBenchmark
       ];
       builder.Class.RenderDeclaration();
 
-      builder.Method.Modifiers = "public abstract";
+      builder.Method.Modifiers = "public";
       builder.Method.ReturnType = "void";
       builder.Method.Name = "TestMethod";
 
@@ -83,7 +83,7 @@ public class OldWriterCompareBenchmark
       ];
       builder.Class.RenderDeclaration();
 
-      builder.Method.Modifiers = "public abstract";
+      builder.Method.Modifiers = "public";
       builder.Method.ReturnType = "void";
       builder.Method.Name = "TestMethod";
 
