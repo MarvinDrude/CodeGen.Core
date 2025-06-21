@@ -36,16 +36,24 @@ public readonly ref struct RefStringView : IByteSerializable<RefStringView>
    
    public static void Write(scoped Span<byte> buffer, scoped ref readonly RefStringView instance)
    {
-      
+      var length = instance.Length * sizeof(char);
+      using var writer = new ByteWriter(buffer);
+
+      writer.WriteLittleEndian(length);
+      writer.WriteStringRaw(instance.Span);
    }
 
-   public static void Read(scoped ReadOnlySpan<byte> buffer, out RefStringView instance)
+   public static void Read(ReadOnlySpan<byte> buffer, out RefStringView instance)
    {
-      throw new NotImplementedException();
+      var reader = new ByteReader(buffer);
+      var length = reader.ReadLittleEndian<int>();
+      var chars = reader.ReadStringRaw(length);
+      
+      instance = new RefStringView(chars);
    }
 
    public static int CalculateByteLength(scoped ref readonly RefStringView instance)
    {
-      throw new NotImplementedException();
+      return sizeof(int) + instance.Length * sizeof(char);
    }
 }

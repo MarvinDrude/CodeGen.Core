@@ -66,4 +66,49 @@ public class ByteWriterReaderSimpleTests
       await Assert.That(r5b).IsEqualTo(v5);
       await Assert.That(r5l).IsEqualTo(v5);
    }
+
+   [Test]
+   public async Task SimpleRawStrings()
+   {
+      const string strOne = "Hallo!😀";
+      
+      var writer = new ByteWriter(
+         stackalloc byte[256]);
+      
+      var length = writer.WriteStringRaw(strOne);
+
+      var reader = new ByteReader(writer.WrittenSpan);
+
+      var chars = reader.ReadStringRaw(length);
+      Span<char> charsCopy = stackalloc char[chars.Length];
+      chars.CopyTo(charsCopy);
+
+      var copyStr = new string(charsCopy);
+
+      reader.Position = 0;
+      var str = reader.ReadStringRawToString(length);
+      
+      writer.Fill(0);
+      writer.Dispose();
+      
+      await Assert.That(str).IsEqualTo(strOne);
+      await Assert.That(copyStr).IsEqualTo(strOne);
+   }
+   
+   [Test]
+   public async Task SimpleStrings()
+   {
+      const string strOne = "Hallo!😀";
+      
+      var writer = new ByteWriter(
+         stackalloc byte[256]);
+      
+      var length = writer.WriteString(strOne);
+      var reader = new ByteReader(writer.WrittenSpan);
+
+      var newString = reader.ReadString(length);
+      writer.Dispose();
+      
+      await Assert.That(newString).IsEqualTo(strOne);
+   }
 }

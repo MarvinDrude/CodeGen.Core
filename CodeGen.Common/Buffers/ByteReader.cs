@@ -17,6 +17,7 @@ public ref struct ByteReader
    {
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       get => _position;
+      set => _position = value;
    }
    
    private readonly ReadOnlySpan<byte> _buffer;

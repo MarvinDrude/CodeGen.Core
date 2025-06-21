@@ -60,10 +60,12 @@ public ref struct ByteWriter : IDisposable
    /// Same endianness required too.
    /// </summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public void WriteStringRaw(scoped ReadOnlySpan<char> text)
+   public int WriteStringRaw(scoped ReadOnlySpan<char> text)
    {
       var rawBytes = MemoryMarshal.AsBytes(text);
       _writer.Write(rawBytes);
+      
+      return rawBytes.Length;
    }
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -93,6 +95,12 @@ public ref struct ByteWriter : IDisposable
    public void WriteBytes(Span<byte> buffer)
    {
       _writer.Write(buffer);
+   }
+
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public void Fill(byte value)
+   {
+      _writer.Fill(value);
    }
 
    public void Dispose()
