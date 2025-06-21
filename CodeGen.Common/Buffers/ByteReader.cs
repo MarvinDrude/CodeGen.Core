@@ -6,6 +6,18 @@ namespace CodeGen.Common.Buffers;
 [StructLayout(LayoutKind.Sequential)]
 public ref struct ByteReader
 {
+   public int BytesLeft
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _buffer.Length - _position;
+   }
+   
+   public int Position
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _position;
+   }
+   
    private readonly ReadOnlySpan<byte> _buffer;
    private int _position;
 
@@ -55,4 +67,6 @@ public ref struct ByteReader
          
       return MemoryMarshal.Read<T>(temp);
    }
+   
+   
 }
