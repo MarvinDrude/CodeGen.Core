@@ -113,7 +113,7 @@ public ref struct BufferWriter<T> : IDisposable
    {
       if (_owner.Length - _position < span.Length)
       {
-         ResizeSpan(span.Length);
+         ResizeSpan(span.Length - FreeCapacity);
       }
       
       ref var srcBase = ref Unsafe.As<T, byte>(ref MemoryMarshal.GetReference(span));
@@ -130,14 +130,27 @@ public ref struct BufferWriter<T> : IDisposable
 
       _position += span.Length;
    }
+
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public Span<T> AcquireSpan(int length, bool movePosition = true)
+   {
+      var start = _position;
+      
+      if (_owner.Length - start < length)
+      {
+         ResizeSpan(length - FreeCapacity);
+      }
+      
+      if (movePosition)
+      {
+         _position += length;
+      }
+
+      return _owner.Span.Slice(start, length);
+   }
    
    private void ResizeSpan(int requestedLength)
    {
-      if (_owner.Length - _position >= requestedLength)
-      {
-         return;
-      }
-
       int newLength;
       if (!_isGrown && _initialMinGrowCapacity >= requestedLength)
       {

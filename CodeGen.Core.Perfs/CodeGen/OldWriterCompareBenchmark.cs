@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Security.Cryptography;
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using CodeGen.Common.CodeGen.Immediate;
 using CodeGen.Common.CodeGen.Models.Methods;
@@ -32,7 +33,7 @@ public class OldWriterCompareBenchmark
       builder.NameSpace.Path = "My.NameSpace";
       builder.NameSpace.Render();
 
-      builder.Class.Declaration = "public abstract class Test";
+      builder.Class.Declaration = $"public abstract class Test";
       builder.Class.BaseDeclarations = [
          "BaseClassOne",
          "IInterfaceTwo"

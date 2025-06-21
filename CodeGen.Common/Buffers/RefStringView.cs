@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace CodeGen.Common.Buffers;
 
-[StructLayout(LayoutKind.Auto)]
+[StructLayout(LayoutKind.Sequential)]
 public readonly ref struct RefStringView
 {
    public ReadOnlySpan<char> Span
