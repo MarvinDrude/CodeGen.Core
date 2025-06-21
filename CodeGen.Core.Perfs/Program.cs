@@ -8,7 +8,7 @@ using CodeGen.Core.Perfs.CodeGen;
 
 // for (var e = 0; e < 10_000; e++)
 // {
-//    new OldWriterCompareBenchmark().NewWriterArrayPoolNeededToStringResult();
+//    new OldWriterCompareBenchmark().CodeGenHelpersBuilder();
 // }
 
 #if RELEASE

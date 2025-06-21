@@ -9,6 +9,7 @@
    </PropertyGroup>
 
    <ItemGroup>
+     <PackageReference Include="AvantiPoint.CodeGenHelpers" Version="2.0.30-pre" />
      <PackageReference Include="BenchmarkDotNet" Version="0.15.2" />
    </ItemGroup>
 
