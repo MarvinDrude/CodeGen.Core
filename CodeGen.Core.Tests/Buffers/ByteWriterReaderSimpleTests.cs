@@ -47,7 +47,7 @@ public class ByteWriterReaderSimpleTests
       
       var r5b = reader.ReadBigEndian<double>();
       var r5l = reader.ReadLittleEndian<double>();
-
+      
       writer.Dispose();
       await Assert.That(reader.BytesLeft).IsEqualTo(0);
       

@@ -1,6 +1,7 @@
 ﻿using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace CodeGen.Common.Buffers;
 
@@ -22,7 +23,7 @@ public ref struct ByteWriter : IDisposable
       _writer = new BufferWriter<byte>(buffer, initialMinGrowCapacity);   
    }
 
-   public void WriteBigEndian<T>(T value)
+   public int WriteBigEndian<T>(T value)
       where T : unmanaged
    {
       var size = Unsafe.SizeOf<T>();
@@ -34,9 +35,11 @@ public ref struct ByteWriter : IDisposable
       {
          span.Reverse();
       }
+
+      return size;
    }
 
-   public void WriteLittleEndian<T>(T value)
+   public int WriteLittleEndian<T>(T value)
       where T : unmanaged
    {
       var size = Unsafe.SizeOf<T>();
@@ -48,6 +51,36 @@ public ref struct ByteWriter : IDisposable
       {
          span.Reverse();
       }
+
+      return size;
+   }
+
+   /// <summary>
+   /// Only meant for intra process / memory to memory since it's just a recast.
+   /// Same endianness required too.
+   /// </summary>
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public void WriteStringRaw(scoped ReadOnlySpan<char> text)
+   {
+      var rawBytes = MemoryMarshal.AsBytes(text);
+      _writer.Write(rawBytes);
+   }
+   
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public int WriteString(scoped ReadOnlySpan<char> text)
+   {
+      return WriteString(text, Encoding.UTF8);
+   }
+   
+   public int WriteString(scoped ReadOnlySpan<char> text, Encoding encoding)
+   {
+      var size = encoding.GetByteCount(text);
+      var span = _writer.AcquireSpan(size);
+
+      var written = encoding.GetBytes(text, span);
+      ArgumentOutOfRangeException.ThrowIfNotEqual(size, written);
+      
+      return written;
    }
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace CodeGen.Common.Buffers;
 
@@ -67,6 +68,52 @@ public ref struct ByteReader
          
       return MemoryMarshal.Read<T>(temp);
    }
+
+   /// <summary>
+   /// Only meant for intra process / memory to memory since it's just a recast.
+   /// Same endianness required too.
+   /// </summary>
+   public string ReadStringRawToString(int size)
+   {
+      var chars = ReadStringRaw(size);
+      return new string(chars);
+   }
    
+   /// <summary>
+   /// Only meant for intra process / memory to memory since it's just a recast.
+   /// Same endianness required too. (this is not a copy and is based on the underlying bytes)
+   /// </summary>
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public ReadOnlySpan<char> ReadStringRaw(int size)
+   {
+      var raw = _buffer.Slice(_position, size);
+      var chars = MemoryMarshal.Cast<byte, char>(raw);
+
+      _position += size;
+      return chars;
+   }
+
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public string ReadString(int size)
+   {
+      return ReadString(size, Encoding.UTF8);
+   }
    
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public string ReadString(int size, Encoding encoding)
+   {
+      var str = encoding.GetString(_buffer.Slice(_position, size));
+      _position += size;
+
+      return str;
+   }
+   
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public ReadOnlySpan<byte> ReadBytes(int length)
+   {
+      var span = _buffer.Slice(_position, length);
+      _position += length;
+
+      return span;
+   }
 }
