@@ -13,7 +13,8 @@ using CodeGen.Core.Perfs.CodeGen;
 // }
 
 #if RELEASE
-BenchmarkRunner.Run<OldWriterCompareBenchmark>();
+//BenchmarkRunner.Run<OldWriterCompareBenchmark>();
+BenchmarkRunner.Run<FluentBenchmark>();
 #else
 
 // var builder = new CodeBuilder(
@@ -47,14 +48,7 @@ BenchmarkRunner.Run<OldWriterCompareBenchmark>();
 //
 // var str = builder.ToString();
 
-var builder = new FluentCodeBuilder(
-   stackalloc char[512],
-   stackalloc char[64],
-   stackalloc byte[512]);
 
-var test = builder.CreateClass();
-test.WithName("TestA")
-   .Render();
 
 _ = "";
 

@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CodeGen.Common.Buffers;
+using CodeGen.Common.CodeGen.Fluent;
 using CodeGen.Common.CodeGen.Immediate;
 using CodeGen.Common.CodeGen.State;
 
@@ -18,6 +19,8 @@ public ref struct CodeBuilder : IDisposable
    public NameSpaceStateBuilder NameSpace;
    public ClassStateBuilder Class;
    public MethodStateBuilder Method;
+
+   internal BufferOwner<byte> TempBufferOwner;
 
    public CodeBuilder(
       Span<char> buffer,
@@ -43,7 +46,28 @@ public ref struct CodeBuilder : IDisposable
       Class = new ClassStateBuilder(ref Unsafe.AsRef(ref this));
       Method = new MethodStateBuilder(ref Unsafe.AsRef(ref this));
    }
+   
+   public ClassBuilderInfo CreateClass()
+   {
+      EnsureTempBufferOwner();
+      return new ClassBuilderInfo(ref Unsafe.AsRef(ref this));
+   }
 
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public void SetTemporaryBuffer(Span<byte> buffer)
+   {
+      TempBufferOwner = new BufferOwner<byte>(buffer);
+   }
+   
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   private void EnsureTempBufferOwner()
+   {
+      if (TempBufferOwner.IsEmpty)
+      {
+         TempBufferOwner = BufferAllocator<byte>.CreatePooled(1024, true);
+      }
+   }
+   
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public override string ToString()
    {

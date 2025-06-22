@@ -8,15 +8,15 @@ public ref struct ClassBuilderInfo
    internal RefStringView Name;
 
    private readonly ref byte _builderReference;
-   internal ref FluentCodeBuilder Builder
+   internal ref CodeBuilder Builder
    {
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
-      get => ref Unsafe.As<byte, FluentCodeBuilder>(ref _builderReference);
+      get => ref Unsafe.As<byte, CodeBuilder>(ref _builderReference);
    }
    
-   public ClassBuilderInfo(ref FluentCodeBuilder builder)
+   public ClassBuilderInfo(ref CodeBuilder builder)
    {
-      _builderReference = ref Unsafe.As<FluentCodeBuilder, byte>(ref builder);
+      _builderReference = ref Unsafe.As<CodeBuilder, byte>(ref builder);
    }
 }
 

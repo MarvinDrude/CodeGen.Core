@@ -4,9 +4,9 @@ namespace CodeGen.Common.CodeGen.Fluent;
 
 public static partial class ClassBuilderInfoExtensions
 {
-   public static ref FluentCodeBuilder Render(this ref ClassBuilderInfo info)
+   public static ref CodeBuilder Render(this ref ClassBuilderInfo info)
    {
-      ref var builder = ref info.Builder.Builder;
+      ref var builder = ref info.Builder;
 
       builder.ClassIm.WriteLine(info.Name.Span);
       
