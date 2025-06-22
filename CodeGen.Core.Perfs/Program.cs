@@ -2,6 +2,7 @@
 using BenchmarkDotNet.Running;
 using CodeGen.Common.Buffers;
 using CodeGen.Common.CodeGen;
+using CodeGen.Common.CodeGen.Fluent;
 using CodeGen.Common.CodeGen.Immediate;
 using CodeGen.Common.CodeGen.Models.Methods;
 using CodeGen.Core.Perfs.CodeGen;
@@ -15,36 +16,46 @@ using CodeGen.Core.Perfs.CodeGen;
 BenchmarkRunner.Run<OldWriterCompareBenchmark>();
 #else
 
-var builder = new CodeBuilder(
-   stackalloc char[12],
-   stackalloc char[128],
-   3, ' ');
+// var builder = new CodeBuilder(
+//    stackalloc char[12],
+//    stackalloc char[128],
+//    3, ' ');
+//
+// builder.Method.IsOnlyHeader = false;
+// builder.Method.Name = "AbstractMethod<T, E>";
+// builder.Method.ReturnType = "void";
+// builder.Method.Modifiers = "public abstract";
+// builder.Method.GenericConstraints = [
+//    "where T : notnull",
+//    "where E : IInterface",
+// ];
+// builder.Method.Parameters = [
+//    new MethodParameter()
+//    {
+//       Name = "test",
+//       Type = "string",
+//    },
+//    new MethodParameter()
+//    {
+//       Name = "test1",
+//       Type = "string",
+//    }
+// ];
+// builder.Method.RenderHeader();
+// builder.Writer.OpenBody();
+// builder.Writer.CloseBody();
+//
+// var str = builder.ToString();
 
-builder.Method.IsOnlyHeader = false;
-builder.Method.Name = "AbstractMethod<T, E>";
-builder.Method.ReturnType = "void";
-builder.Method.Modifiers = "public abstract";
-builder.Method.GenericConstraints = [
-   "where T : notnull",
-   "where E : IInterface",
-];
-builder.Method.Parameters = [
-   new MethodParameter()
-   {
-      Name = "test",
-      Type = "string",
-   },
-   new MethodParameter()
-   {
-      Name = "test1",
-      Type = "string",
-   }
-];
-builder.Method.RenderHeader();
-builder.Writer.OpenBody();
-builder.Writer.CloseBody();
+var builder = new FluentCodeBuilder(
+   stackalloc char[512],
+   stackalloc char[64],
+   stackalloc byte[512]);
 
-var str = builder.ToString();
+var test = builder.CreateClass();
+test.WithName("TestA")
+   .Render();
+
 _ = "";
 
 #endif
