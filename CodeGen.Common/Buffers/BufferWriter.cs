@@ -149,28 +149,6 @@ public ref struct BufferWriter<T> : IDisposable
       return _owner.Span.Slice(start, length);
    }
    
-   private void ResizeSpan(int requestedLength)
-   {
-      int newLength;
-      if (!_isGrown && _initialMinGrowCapacity >= requestedLength)
-      {
-         newLength = _owner.Length + _initialMinGrowCapacity;
-      }
-      else
-      {
-         var growBy = _owner.Length > 0 ? Math.Max(requestedLength, _owner.Length) : 256;
-         newLength = _owner.Length + growBy;
-      }
-
-      var lastOwner = _owner;
-      _owner = BufferAllocator<T>.CreatePooled(newLength, true);
-      
-      lastOwner.Span.CopyTo(_owner.Span);
-      lastOwner.Dispose();
-      
-      _isGrown = true;
-   }
-   
    public void Move(int fromStart, int fromLength, int toStart, bool movePosition = true)
    {
       if (fromLength == 0 || fromStart == toStart)
@@ -194,6 +172,50 @@ public ref struct BufferWriter<T> : IDisposable
       _position = movePosition ? newPosition : oldPosition;
    }
 
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public void Advance(int count)
+   {
+      if (_owner.Length - _position < count)
+      {
+         ResizeSpan(count - FreeCapacity);
+      }
+      
+      _position += count;
+   }
+
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public void AdvanceTo(int position)
+   {
+      if (_owner.Length < position)
+      {
+         ResizeSpan(position - _owner.Length);
+      }
+      
+      _position = position;
+   }
+   
+   private void ResizeSpan(int requestedLength)
+   {
+      int newLength;
+      if (!_isGrown && _initialMinGrowCapacity >= requestedLength)
+      {
+         newLength = _owner.Length + _initialMinGrowCapacity;
+      }
+      else
+      {
+         var growBy = _owner.Length > 0 ? Math.Max(requestedLength, _owner.Length) : 256;
+         newLength = _owner.Length + growBy;
+      }
+
+      var lastOwner = _owner;
+      _owner = BufferAllocator<T>.CreatePooled(newLength, true);
+      
+      lastOwner.Span.CopyTo(_owner.Span);
+      lastOwner.Dispose();
+      
+      _isGrown = true;
+   }
+   
    public void Dispose()
    {
       if (_disposed)

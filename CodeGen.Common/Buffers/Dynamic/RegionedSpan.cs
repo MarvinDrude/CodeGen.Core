@@ -2,7 +2,7 @@
 
 namespace CodeGen.Common.Buffers.Dynamic;
 
-public ref struct RegionedSpan
+public ref struct RegionedSpan : IDisposable
 {
    private BufferWriter<byte> _totalBuffer;
    private int _regionCount;
@@ -34,18 +34,38 @@ public ref struct RegionedSpan
    {
       if (FreeHeaderSize < HeaderEntrySize)
       {
-         ResizeHeader();
+         GrowHeader();
       }
+
+      _totalBuffer.Position = _headerPosition;
+      using var writer = new ByteWriter(_totalBuffer.AcquireSpan(HeaderEntrySize, false));
+
+      writer.WriteLittleEndian(_position);
+      writer.WriteLittleEndian(minSize);
+
+      var newPosition = _position + minSize;
+      _totalBuffer.AdvanceTo(newPosition);
       
+      _headerPosition += HeaderEntrySize;
       _regionCount++;
 
       return 0;
    }
 
-   private void ResizeHeader()
+   public void Dispose()
    {
+      _totalBuffer.Dispose();
+   }
+   
+   private void GrowHeader()
+   {
+      var oldSize = _headerSize;
+      var newSize = _headerSize + _headerGrowSize;
+      
+      _totalBuffer.Move(oldSize, oldSize - _totalBuffer.Capacity, newSize, false);
+      _position += _headerGrowSize;
    }
 
-   private const int DefaultHeaderSize = 64;
-   private const int HeaderEntrySize = sizeof(int) + sizeof(int);
+   internal const int DefaultHeaderSize = 64;
+   internal const int HeaderEntrySize = sizeof(int) + sizeof(int);
 }

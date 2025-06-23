@@ -67,4 +67,30 @@ public class BufferWriterSimpleTests
 
       await Assert.That(result.SequenceEqual(buffer)).IsEqualTo(true);
    }
+   
+   [Test]
+   public async Task AdvanceToNoResize()
+   {
+      var writer = new BufferWriter<byte>(
+         stackalloc byte[5]);
+      
+      writer.AdvanceTo(3);
+      writer.Dispose();
+
+      await Assert.That(writer.Position).IsEqualTo(3);
+   }
+   
+   [Test]
+   public async Task AdvanceToResize()
+   {
+      var writer = new BufferWriter<byte>(
+         stackalloc byte[5]);
+      
+      writer.AdvanceTo(250);
+      var capacity = writer.Capacity;
+      writer.Dispose();
+
+      await Assert.That(writer.Position).IsEqualTo(250);
+      await Assert.That(capacity).IsEqualTo(250);
+   }
 }
