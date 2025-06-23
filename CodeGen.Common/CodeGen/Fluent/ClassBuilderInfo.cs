@@ -6,7 +6,10 @@ namespace CodeGen.Common.CodeGen.Fluent;
 public ref struct ClassBuilderInfo
 {
    internal RefStringView Name;
+   internal RefStringView BaseClassName;
 
+   internal Span<string> InterfaceNames;
+   
    private readonly ref byte _builderReference;
    internal ref CodeBuilder Builder
    {
@@ -23,9 +26,18 @@ public ref struct ClassBuilderInfo
 public static partial class ClassBuilderInfoExtensions
 {
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static ref ClassBuilderInfo WithName(this ref ClassBuilderInfo info, ReadOnlySpan<char> name)
+   public static ref ClassBuilderInfo SetName(this ref ClassBuilderInfo info, ReadOnlySpan<char> name)
    {
       info.Name = name;
       return ref info;
    }
+   
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ref ClassBuilderInfo SetBaseClassName(this ref ClassBuilderInfo info, ReadOnlySpan<char> name)
+   {
+      info.BaseClassName = name;
+      return ref info;
+   }
+   
+   
 }

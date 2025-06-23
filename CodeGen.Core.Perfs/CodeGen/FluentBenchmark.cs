@@ -19,7 +19,8 @@ public class FluentBenchmark
       builder.SetTemporaryBuffer(stackalloc byte[1024]);
 
       var test = builder.CreateClass();
-      test.WithName("TestA")
+      test.SetName("TestA")
+         .SetBaseClassName("TestBase")
          .Render();
       
       var cha = builder.Writer.WrittenSpan[2];

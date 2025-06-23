@@ -8,7 +8,7 @@ public static partial class ClassBuilderInfoExtensions
    {
       ref var builder = ref info.Builder;
 
-      builder.ClassIm.WriteLine(info.Name.Span);
+      
       
       return ref info.Builder;
    }

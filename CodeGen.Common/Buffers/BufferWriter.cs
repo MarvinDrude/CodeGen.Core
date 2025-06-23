@@ -170,6 +170,29 @@ public ref struct BufferWriter<T> : IDisposable
       
       _isGrown = true;
    }
+   
+   public void Move(int fromStart, int fromLength, int toStart, bool movePosition = true)
+   {
+      if (fromLength == 0 || fromStart == toStart)
+      {
+         return;
+      }
+
+      var oldPosition = _position;
+      var newPosition = toStart + fromLength;
+      var span = _owner.Span;
+      
+      if (newPosition > span.Length)
+      {
+         ResizeSpan(newPosition - span.Length);
+         span = _owner.Span;
+      }
+
+      span.Slice(fromStart, fromLength)
+         .CopyTo(span.Slice(toStart, fromLength));
+      
+      _position = movePosition ? newPosition : oldPosition;
+   }
 
    public void Dispose()
    {
