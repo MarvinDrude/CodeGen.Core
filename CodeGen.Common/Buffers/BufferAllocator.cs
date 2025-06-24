@@ -5,7 +5,7 @@ namespace CodeGen.Common.Buffers;
 public static class BufferAllocator<T>
 {
    private static readonly ArrayPool<T> _pool = ArrayPool<T>.Shared;
-
+   
    public static BufferOwner<T> CreatePooled(int minBufferLength, bool exactLength)
    {
       var owner = new BufferOwner<T>(_pool, minBufferLength, exactLength);

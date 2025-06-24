@@ -8,8 +8,6 @@ public ref struct ClassBuilderInfo
    internal RefStringView Name;
    internal RefStringView BaseClassName;
 
-   internal Span<string> InterfaceNames;
-   
    private readonly ref byte _builderReference;
    internal ref CodeBuilder Builder
    {
@@ -38,6 +36,11 @@ public static partial class ClassBuilderInfoExtensions
       info.BaseClassName = name;
       return ref info;
    }
-   
-   
+
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ref ClassBuilderInfo AddInterfaceName(this ref ClassBuilderInfo info, ReadOnlySpan<char> name)
+   {
+      info.Builder.AddTemporaryData(info.Builder.RegionIndexClassInterfaces, new RefStringView(name));
+      return ref info;
+   }
 }

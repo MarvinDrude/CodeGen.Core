@@ -6,6 +6,12 @@ namespace CodeGen.Common.Buffers.Dynamic;
 [DebuggerTypeProxy(typeof(RegionedSpanDebugView))]
 public ref struct RegionedSpan : IDisposable
 {
+   public int Capacity
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _totalBuffer.Capacity;
+   }
+   
    private BufferWriter<byte> _totalBuffer;
    private int _regionCount;
    private int _position;
@@ -22,6 +28,13 @@ public ref struct RegionedSpan : IDisposable
    
    public RegionedSpan(
       Span<byte> buffer,
+      int initialHeaderSize = -1)
+      : this(new BufferOwner<byte>(buffer), initialHeaderSize)
+   {
+   }
+   
+   public RegionedSpan(
+      BufferOwner<byte> buffer,
       int initialHeaderSize = -1)
    {
       _totalBuffer = new BufferWriter<byte>(buffer);

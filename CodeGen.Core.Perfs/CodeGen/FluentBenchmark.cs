@@ -21,6 +21,8 @@ public class FluentBenchmark
       var test = builder.CreateClass();
       test.SetName("TestA")
          .SetBaseClassName("TestBase")
+         .AddInterfaceName("IInterfaceTwo")
+         .AddInterfaceName("IInterfaceThree")
          .Render();
       
       var cha = builder.Writer.WrittenSpan[2];

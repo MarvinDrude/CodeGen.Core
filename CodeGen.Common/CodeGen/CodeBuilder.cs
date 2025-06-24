@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CodeGen.Common.Buffers;
+using CodeGen.Common.Buffers.Dynamic;
 using CodeGen.Common.CodeGen.Fluent;
 using CodeGen.Common.CodeGen.Immediate;
 using CodeGen.Common.CodeGen.State;
@@ -8,7 +9,7 @@ using CodeGen.Common.CodeGen.State;
 namespace CodeGen.Common.CodeGen;
 
 [StructLayout(LayoutKind.Sequential)]
-public ref struct CodeBuilder : IDisposable
+public ref partial struct CodeBuilder : IDisposable
 {
    public CodeTextWriter Writer;
    
@@ -20,7 +21,7 @@ public ref struct CodeBuilder : IDisposable
    public ClassStateBuilder Class;
    public MethodStateBuilder Method;
 
-   internal BufferOwner<byte> TempBufferOwner;
+   internal RegionedSpan TemporaryData;
 
    public CodeBuilder(
       Span<char> buffer,
@@ -56,16 +57,21 @@ public ref struct CodeBuilder : IDisposable
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void SetTemporaryBuffer(Span<byte> buffer)
    {
-      TempBufferOwner = new BufferOwner<byte>(buffer);
+      TemporaryData.Dispose();
+      
+      TemporaryData = new RegionedSpan(buffer);
+      EnsureTemporaryRegions();
    }
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    private void EnsureTempBufferOwner()
    {
-      if (TempBufferOwner.IsEmpty)
-      {
-         TempBufferOwner = BufferAllocator<byte>.CreatePooled(1024, true);
-      }
+      if (TemporaryData.Capacity != 0) return;
+      
+      var owner = BufferAllocator<byte>.CreatePooled(1024, true);
+      
+      TemporaryData = new RegionedSpan(owner);
+      EnsureTemporaryRegions();
    }
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -77,5 +83,8 @@ public ref struct CodeBuilder : IDisposable
    public void Dispose()
    {
       Writer.Dispose();
+      TemporaryData.Dispose();
    }
+
+   public int RegionIndexClassInterfaces;
 }
