@@ -16,6 +16,4 @@ public ref struct SpanRegion
       Offset = offset;
       ByteLength = region.Length;
    }
-   
-   
 }

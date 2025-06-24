@@ -13,6 +13,14 @@ public ref struct ByteWriter : IDisposable
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       get => _writer.WrittenSpan;
    }
+
+   public int Position
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _writer.Position;
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      set => _writer.Position = value;
+   }
    
    private BufferWriter<byte> _writer;
    
