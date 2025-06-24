@@ -34,7 +34,7 @@ public readonly ref struct RefStringView : IByteSerializable<RefStringView>
    public static implicit operator RefStringView(string str) => new (str);
    public static implicit operator RefStringView(ReadOnlySpan<char> span) => new (span);
    
-   public static void Write(scoped Span<byte> buffer, scoped ref readonly RefStringView instance)
+   public static void Write(scoped Span<byte> buffer, scoped in RefStringView instance)
    {
       var length = instance.Length * sizeof(char);
       using var writer = new ByteWriter(buffer);
@@ -43,16 +43,17 @@ public readonly ref struct RefStringView : IByteSerializable<RefStringView>
       writer.WriteStringRaw(instance.Span);
    }
 
-   public static void Read(ReadOnlySpan<byte> buffer, out RefStringView instance)
+   public static int Read(ReadOnlySpan<byte> buffer, out RefStringView instance)
    {
       var reader = new ByteReader(buffer);
       var length = reader.ReadLittleEndian<int>();
       var chars = reader.ReadStringRaw(length);
       
       instance = new RefStringView(chars);
+      return CalculateByteLength(instance);
    }
 
-   public static int CalculateByteLength(scoped ref readonly RefStringView instance)
+   public static int CalculateByteLength(scoped in RefStringView instance)
    {
       return sizeof(int) + instance.Length * sizeof(char);
    }

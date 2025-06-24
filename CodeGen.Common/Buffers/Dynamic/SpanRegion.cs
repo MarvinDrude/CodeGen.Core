@@ -4,16 +4,18 @@ public ref struct SpanRegion
 {
    public int Offset;
    public int ByteLength;
+   public int InnerOffset;
+   public int ItemCount;
 
-   private Span<byte> _region;
-   
    public SpanRegion(
       int offset,
-      Span<byte> region)
+      int byteLength,
+      int innerOffset,
+      int itemCount)
    {
-      _region = region;
-      
       Offset = offset;
-      ByteLength = region.Length;
+      ByteLength = byteLength;
+      InnerOffset = innerOffset;
+      ItemCount = itemCount;
    }
 }

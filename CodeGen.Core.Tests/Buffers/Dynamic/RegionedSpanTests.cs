@@ -1,4 +1,5 @@
-﻿using CodeGen.Common.Buffers.Dynamic;
+﻿using CodeGen.Common.Buffers;
+using CodeGen.Common.Buffers.Dynamic;
 
 namespace CodeGen.Core.Tests.Buffers.Dynamic;
 
@@ -85,5 +86,30 @@ public class RegionedSpanTests
       await Assert.That(span1length).IsEqualTo(60);
       await Assert.That(span2length).IsEqualTo(10);
       await Assert.That(span3length).IsEqualTo(6);
+   }
+   
+   [Test]
+   public async Task IterateRegionSimpleTests()
+   {
+      var regioned = new RegionedSpan(stackalloc byte[512]);
+
+      var index1 = regioned.AddRegion(256);
+      var index2 = regioned.AddRegion(5);
+
+      RefStringView str1 = "Test1234";
+      regioned.AddToRegion(index1, in str1);
+      RefStringView str2 = "3454lalaladsadsa";
+      regioned.AddToRegion(index1, in str2);
+
+      List<string> result = [];
+
+      foreach (var strView in regioned.GetRegionEnumerator<RefStringView>(index1))
+      {
+         result.Add(strView.ToString());
+      }
+      
+      await Assert.That(result.Count).IsEqualTo(2);
+      await Assert.That(result[0]).IsEqualTo("Test1234");
+      await Assert.That(result[1]).IsEqualTo("3454lalaladsadsa");
    }
 }
