@@ -10,9 +10,9 @@ public class RefStringViewTests
       const string str = "Hallo!";
       
       var view = new RefStringView(str);
-      Span<byte> buffer = stackalloc byte[RefStringView.CalculateByteLength(ref view)];
+      Span<byte> buffer = stackalloc byte[RefStringView.CalculateByteLength(in view)];
 
-      RefStringView.Write(buffer, ref view);
+      RefStringView.Write(buffer, in view);
       RefStringView.Read(buffer, out var newView);
 
       var newString = new string(newView.Span);

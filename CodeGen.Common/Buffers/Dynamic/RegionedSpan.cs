@@ -1,7 +1,9 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace CodeGen.Common.Buffers.Dynamic;
 
+[DebuggerTypeProxy(typeof(RegionedSpanDebugView))]
 public ref struct RegionedSpan : IDisposable
 {
    private BufferWriter<byte> _totalBuffer;
@@ -69,6 +71,33 @@ public ref struct RegionedSpan : IDisposable
 
       T.Write(_totalBuffer.Owner.Span.Slice(
          region.Offset + region.InnerOffset, dataSize), in data);
+   }
+
+   public void ClearRegion(int regionIndex, int setSize = -1)
+   {
+      if (regionIndex < 0 || regionIndex >= _regionCount)
+      {
+         throw new ArgumentOutOfRangeException(nameof(regionIndex));
+      }
+
+      var region = GetRegionMetadata(regionIndex);
+      
+      if (region.ItemCount > 0)
+      {
+         var headerOffset = HeaderEntrySize * regionIndex;
+         _totalBuffer.Position = 0;
+      
+         var writer = new ByteWriter(_totalBuffer.Owner.Span);
+         writer.Position = headerOffset + sizeof(int) + sizeof(int);
+
+         writer.WriteLittleEndian(0);
+         writer.WriteLittleEndian(0);
+      }
+
+      if (setSize >= 0)
+      {
+         ResizeRegion(regionIndex, setSize);
+      }
    }
    
    public void ResizeRegion(int regionIndex, int newSize)
@@ -208,7 +237,7 @@ public ref struct RegionedSpan : IDisposable
    internal const int DefaultHeaderSize = 64;
    internal const int HeaderEntrySize = sizeof(int) + sizeof(int) + sizeof(int) + sizeof(int);
 
-   public ref struct RegionEnumeratorHolder<T>
+   public readonly ref struct RegionEnumeratorHolder<T>
       where T : struct, IByteSerializable<T>, allows ref struct
    {
       private readonly Span<byte> _span;
@@ -270,6 +299,42 @@ public ref struct RegionedSpan : IDisposable
       {
          [MethodImpl(MethodImplOptions.AggressiveInlining)]
          get => _current;
+      }
+   }
+   
+   public ref struct RegionedSpanDebugView
+   {
+      public List<ManagedSpanRegion> RegionMetadata { get; } 
+      
+      private readonly RegionedSpan _source;
+   
+      public RegionedSpanDebugView(RegionedSpan source)
+      {
+         _source = source;
+
+         RegionMetadata = [];
+         for (var e = 0; e < RegionCount; e++)
+         {
+            RegionMetadata.Add(new ManagedSpanRegion(source.GetRegionMetadata(e)));
+         }
+      }
+
+      public int RegionCount => _source._regionCount;
+
+      public sealed class ManagedSpanRegion
+      {
+         public int Offset { get; set; }
+         public int ByteLength { get; set; }
+         public int InnerOffset { get; set; }
+         public int ItemCount { get; set; }
+         
+         public ManagedSpanRegion(SpanRegion region)
+         {
+            Offset = region.Offset;
+            ByteLength = region.ByteLength;
+            InnerOffset = region.InnerOffset;
+            ItemCount = region.ItemCount;
+         }
       }
    }
 }
