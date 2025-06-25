@@ -25,7 +25,7 @@ public class FluentBenchmark
          .AddInterfaceName("IInterfaceThree")
          .Render();
       
-      var cha = builder.Writer.WrittenSpan[2];
+      var cha = builder.Writer.WrittenSpan[0];
       builder.Dispose();
 
       return cha;

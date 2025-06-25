@@ -559,6 +559,7 @@ public class OldWriterCompareBenchmark
             .SetBaseClass("BaseClassOne")
             .AddInterface("IInterfaceTwo")
             .Abstract()
+         .AddGe
          .AddMethod("TestMethod")
             .AddParameter("string", "name")
             .WithReturnType("void")
