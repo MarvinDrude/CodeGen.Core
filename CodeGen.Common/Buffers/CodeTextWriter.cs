@@ -200,6 +200,12 @@ public ref struct CodeTextWriter : IDisposable
       
       _currentLevelBuffer = GetCurrentIndentBuffer();
    }
+
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public Span<char> AcquireSpan(int length)
+   {
+      return _buffer.AcquireSpan(length, true);
+   }
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public ReadOnlySpan<char> GetCurrentIndentBuffer()

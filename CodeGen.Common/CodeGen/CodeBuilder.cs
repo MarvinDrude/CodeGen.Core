@@ -87,4 +87,6 @@ public ref partial struct CodeBuilder : IDisposable
    }
 
    public int RegionIndexClassInterfaces;
+   public int RegionIndexClassGenerics;
+   public int RegionIndexClassGenericConstraints;
 }

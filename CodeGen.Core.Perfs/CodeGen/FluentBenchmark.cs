@@ -19,13 +19,32 @@ public class FluentBenchmark
       builder.SetTemporaryBuffer(stackalloc byte[1024]);
 
       var test = builder.CreateClass();
-      test.SetName("TestA")
+      test
+         .SetName("TestA")
+            .IsRecordClass()
+            .IsPartial()
+            .IsInternal()
+            .IsUnsafe()
          .SetBaseClassName("TestBase")
-         .AddInterfaceName("IInterfaceTwo")
-         .AddInterfaceName("IInterfaceThree")
-         .Render();
+            .AddInterfaceName("IInterfaceTwo")
+            .AddInterfaceName("IInterfaceThree");
+
+      var genericParamOne = test.AddGenericParameter("TParameter");
+      genericParamOne
+         .AddConstraint("notnull")
+         .AddConstraint("ISuperInterface")
+         .Done();
+      
+      var genericParamTwo = test.AddGenericParameter("TResult");
+      genericParamTwo
+         .AddConstraint("struct")
+         .AddConstraint("allows ref struct")
+         .Done();
+
+      test.Render();
       
       var cha = builder.Writer.WrittenSpan[0];
+      var str = builder.ToString();
       builder.Dispose();
 
       return cha;

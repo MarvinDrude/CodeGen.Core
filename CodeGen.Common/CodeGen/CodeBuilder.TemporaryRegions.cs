@@ -8,6 +8,8 @@ public ref partial struct CodeBuilder
    private void EnsureTemporaryRegions()
    {
       RegionIndexClassInterfaces = TemporaryData.AddRegion(0);
+      RegionIndexClassGenerics = TemporaryData.AddRegion(0);
+      RegionIndexClassGenericConstraints = TemporaryData.AddRegion(0);
    }
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -20,7 +22,7 @@ public ref partial struct CodeBuilder
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public void ClearTemporaryData(int index)
    {
-      TemporaryData.ClearRegion(index);
+      TemporaryData.ClearRegion(index, 0);
    }
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -1,9 +1,11 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using CodeGen.Common.Buffers;
 using CodeGen.Common.CodeGen.Models.Common;
 
 namespace CodeGen.Common.CodeGen.Fluent;
 
+[StructLayout(LayoutKind.Sequential)]
 public ref struct ClassBuilderInfo
 {
    internal RefStringView Name;
@@ -11,8 +13,10 @@ public ref struct ClassBuilderInfo
 
    internal AccessModifier AccessModifier;
    internal ClassModifier ClassModifiers;
+   internal ClassType Type;
 
    internal bool IsHeaderRendered;
+   internal int GenericParameterCount;
    
    private readonly ref byte _builderReference;
    internal ref CodeBuilder Builder
@@ -28,6 +32,7 @@ public ref struct ClassBuilderInfo
       
       AccessModifier = AccessModifier.Public;
       ClassModifiers = ClassModifier.None;
+      Type = ClassType.Class;
    }
 }
 
@@ -97,5 +102,30 @@ public static partial class ClassBuilderInfoExtensions
    {
       info.ClassModifiers &= ~accessModifier;
       return ref info;
+   }
+   
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ref ClassBuilderInfo SetClassType(this ref ClassBuilderInfo info, ClassType type)
+   {
+      info.Type = type;
+      return ref info;
+   }
+   
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ref ClassBuilderInfo IsClass(this ref ClassBuilderInfo info) => ref info.SetClassType(ClassType.Class);
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ref ClassBuilderInfo IsRecordClass(this ref ClassBuilderInfo info) => ref info.SetClassType(ClassType.RecordClass);
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ref ClassBuilderInfo IsStruct(this ref ClassBuilderInfo info) => ref info.SetClassType(ClassType.Struct);
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ref ClassBuilderInfo IsRecordStruct(this ref ClassBuilderInfo info) => ref info.SetClassType(ClassType.RecordStruct);
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ref ClassBuilderInfo IsInterface(this ref ClassBuilderInfo info) => ref info.SetClassType(ClassType.Interface);
+   
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static GenericBuilderInfo AddGenericParameter(this ref ClassBuilderInfo info, ReadOnlySpan<char> name)
+   {
+      info.GenericParameterCount++;
+      return new GenericBuilderInfo(ref info, name);
    }
 }

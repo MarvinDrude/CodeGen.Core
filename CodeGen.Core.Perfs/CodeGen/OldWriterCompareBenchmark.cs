@@ -556,10 +556,10 @@ public class OldWriterCompareBenchmark
             .AddNamespaceImport("System.A")
             .AddNamespaceImport("System.B")
          .AddClass("Test")
+         .IsStruct()
             .SetBaseClass("BaseClassOne")
             .AddInterface("IInterfaceTwo")
             .Abstract()
-         .AddGe
          .AddMethod("TestMethod")
             .AddParameter("string", "name")
             .WithReturnType("void")
