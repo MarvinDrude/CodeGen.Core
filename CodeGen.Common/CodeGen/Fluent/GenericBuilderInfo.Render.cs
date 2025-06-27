@@ -1,4 +1,6 @@
-﻿namespace CodeGen.Common.CodeGen.Fluent;
+﻿using CodeGen.Common.Buffers;
+
+namespace CodeGen.Common.CodeGen.Fluent;
 
 public static partial class GenericBuilderInfoExtensions
 {
@@ -23,26 +25,33 @@ public static partial class GenericBuilderInfoExtensions
 
    public static void RenderGenericConstraints(this ref CodeBuilder builder, int index)
    {
-      var first = true;
-      
-      foreach (var generic in builder.GetTemporaryEnumerator<GenericBuilderInfo>(index))
+      var enumerator = builder.GetTemporaryEnumerator<GenericBuilderInfo>(index).GetEnumerator();
+      var span = builder.GetTemporarySpan(index);
+
+      while (enumerator.MoveNext())
       {
-         if (first)
-         {
-            first = false;
-            builder.Writer.UpIndent();
-         }
+         var generic = enumerator.Current;
          
          builder.Writer.Write("where ");
          builder.Writer.Write(generic.Name.Span);
          builder.Writer.Write(" : ");
 
+         var offset = enumerator.CurrentOffset + generic.Offset;
+         
          for (var e = 0; e < generic.ConstraintCount; e++)
          {
+            var consumed = RefStringView.Read(span[offset..], out var constraint);
+            offset += consumed;
+
+            if (e > 0)
+            {
+               builder.Writer.Write(", ");
+            }
             
+            builder.Writer.Write(constraint.Span);
          }
+
+         builder.Writer.WriteLine();
       }
-      
-      builder.Writer.DownIndent();
    }
 }

@@ -272,11 +272,18 @@ public ref struct RegionedSpan : IDisposable
    public ref struct RegionEnumerator<T>
       where T : struct, IByteSerializable<T>, allows ref struct
    {
+      public int CurrentOffset
+      {
+         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+         get => _origOffset;
+      }
+      
       private readonly Span<byte> _span;
       private readonly SpanRegion _region;
       private readonly int _regionIndex;
       private int _index;
       private int _offset;
+      private int _origOffset;
 
       private T _current;
 
@@ -288,7 +295,9 @@ public ref struct RegionedSpan : IDisposable
          _regionIndex = regionIndex;
          _region = region;
          _index = -1;
+         
          _offset = 0;
+         _origOffset = 0;
       }
 
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -301,6 +310,8 @@ public ref struct RegionedSpan : IDisposable
          }
 
          _index = index;
+         _origOffset = _offset;
+         
          var read = T.Read(_span[(_region.Offset + _offset)..], out var current);
          _current = current;
          

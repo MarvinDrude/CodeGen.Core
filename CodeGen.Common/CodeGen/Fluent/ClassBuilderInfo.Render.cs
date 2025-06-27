@@ -82,10 +82,18 @@ public static partial class ClassBuilderInfoExtensions
             builder.ClassIm.NextBaseDeclaration(interfaceName.Span, false);
          }
       }
-      
+
+      if (!firstBase)
+      {
+         builder.Writer.DownIndent();
+         builder.Writer.WriteLine();
+      }
+
       if (info.GenericParameterCount > 0)
       {
+         builder.Writer.UpIndent();
          builder.RenderGenericConstraints(builder.RegionIndexClassGenerics);
+         builder.Writer.DownIndent();
       }
 
       builder.Writer.OpenBody();

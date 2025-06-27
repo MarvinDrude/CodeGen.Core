@@ -31,4 +31,10 @@ public ref partial struct CodeBuilder
    {
       return TemporaryData.GetRegionEnumerator<T>(index);
    }
+   
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public Span<byte> GetTemporarySpan(int index)
+   {
+      return TemporaryData.GetRegion(index);
+   }
 }

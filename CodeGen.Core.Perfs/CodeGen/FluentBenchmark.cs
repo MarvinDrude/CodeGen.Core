@@ -26,22 +26,24 @@ public class FluentBenchmark
             .IsInternal()
             .IsUnsafe()
          .SetBaseClassName("TestBase")
-            .AddInterfaceName("IInterfaceTwo")
-            .AddInterfaceName("IInterfaceThree");
+             .AddInterfaceName("IInterfaceTwo")
+             .AddInterfaceName("IInterfaceThree");
 
-      var genericParamOne = test.AddGenericParameter("TParameter");
-      genericParamOne
-         .AddConstraint("notnull")
-         .AddConstraint("ISuperInterface")
-         .Done();
+       var genericParamOne = test.AddGenericParameter("TParameter");
+       genericParamOne
+          .AddConstraint("notnull")
+          .AddConstraint("ISuperInterface")
+          .Done();
       
-      var genericParamTwo = test.AddGenericParameter("TResult");
-      genericParamTwo
-         .AddConstraint("struct")
-         .AddConstraint("allows ref struct")
-         .Done();
+       var genericParamTwo = test.AddGenericParameter("TResult");
+       genericParamTwo
+          .AddConstraint("struct")
+          .AddConstraint("allows ref struct")
+          .Done();
 
       test.Render();
+      
+      
       
       var cha = builder.Writer.WrittenSpan[0];
       var str = builder.ToString();

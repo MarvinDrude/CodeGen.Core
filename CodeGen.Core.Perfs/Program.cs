@@ -12,12 +12,14 @@ using CodeGen.Core.Perfs.CodeGen;
 //    new OldWriterCompareBenchmark().CodeGenHelpersBuilder();
 // }
 
-new FluentBenchmark().SimpleNoAllocationBenchmark();
+//new FluentBenchmark().SimpleNoAllocationBenchmark();
 
 #if RELEASE
 //BenchmarkRunner.Run<OldWriterCompareBenchmark>();
-//BenchmarkRunner.Run<FluentBenchmark>();
+BenchmarkRunner.Run<FluentBenchmark>();
 #else
+
+new FluentBenchmark().SimpleNoAllocationBenchmark();
 
 // var builder = new CodeBuilder(
 //    stackalloc char[12],
