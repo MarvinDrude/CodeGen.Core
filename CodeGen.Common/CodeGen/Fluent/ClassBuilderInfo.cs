@@ -17,6 +17,7 @@ public ref struct ClassBuilderInfo
 
    internal bool IsHeaderRendered;
    internal int GenericParameterCount;
+   internal int ConstructorCount;
    
    private readonly ref byte _builderReference;
    internal ref CodeBuilder Builder
@@ -127,5 +128,12 @@ public static partial class ClassBuilderInfoExtensions
    {
       info.GenericParameterCount++;
       return new GenericBuilderInfo(ref info, name);
+   }
+   
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ConstructorBuilderInfo AddConstructor(this ref ClassBuilderInfo info, AccessModifier accessModifier)
+   {
+      info.ConstructorCount++;
+      return new ConstructorBuilderInfo(ref info, accessModifier);
    }
 }

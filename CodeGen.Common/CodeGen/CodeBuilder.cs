@@ -91,4 +91,5 @@ public ref partial struct CodeBuilder : IDisposable
    public int RegionIndexClassGenericConstraints;
 
    public int RegionIndexConstructors;
+   public int RegionIndexConstructorParameters;
 }

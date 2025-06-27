@@ -10,6 +10,9 @@ public ref partial struct CodeBuilder
       RegionIndexClassInterfaces = TemporaryData.AddRegion(0);
       RegionIndexClassGenerics = TemporaryData.AddRegion(0);
       RegionIndexClassGenericConstraints = TemporaryData.AddRegion(0);
+
+      RegionIndexConstructors = TemporaryData.AddRegion(0);
+      RegionIndexConstructorParameters = TemporaryData.AddRegion(0);
    }
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
