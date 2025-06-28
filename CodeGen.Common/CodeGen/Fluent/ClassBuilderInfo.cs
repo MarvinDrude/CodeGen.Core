@@ -137,3 +137,24 @@ public static partial class ClassBuilderInfoExtensions
       return new ConstructorBuilderInfo(ref info, accessModifier);
    }
 }
+
+
+public readonly ref partial  struct ReadOnlySpanWrapper
+{
+   private readonly ReadOnlySpan<int> _data;
+
+   public ReadOnlySpanWrapper(ReadOnlySpan<int> data)
+   {
+      _data = data;
+   }
+
+   public readonly partial ref int GetElementRef(int index);
+}
+
+public readonly ref partial struct ReadOnlySpanWrapper
+{
+   public readonly partial ref int GetElementRef(int index)
+   {
+      return ref Unsafe.AsRef(0);
+   }
+}

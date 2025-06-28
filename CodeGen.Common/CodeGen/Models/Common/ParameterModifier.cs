@@ -19,16 +19,16 @@ public static class ParameterModifierExtensions
    {
       var offset = 0;
 
-      if (modifier.HasFlag(ParameterModifier.This))   WriteCharBuffer("this", buffer, ref offset);
+      if (modifier.HasFlag(ParameterModifier.This)) WriteCharBuffer("this", buffer, ref offset);
       if (modifier.HasFlag(ParameterModifier.Params)) WriteCharBuffer("params", buffer, ref offset);
       if (modifier.HasFlag(ParameterModifier.Scoped)) WriteCharBuffer("scoped", buffer, ref offset);
 
       if (modifier.HasFlag(ParameterModifier.ReadOnly) && modifier.HasFlag(ParameterModifier.Ref))
          WriteCharBuffer("readonly", buffer, ref offset);
 
-      if (modifier.HasFlag(ParameterModifier.Ref))      WriteCharBuffer("ref", buffer, ref offset);
+      if (modifier.HasFlag(ParameterModifier.Ref)) WriteCharBuffer("ref", buffer, ref offset);
       else if (modifier.HasFlag(ParameterModifier.Out)) WriteCharBuffer("out", buffer, ref offset);
-      else if (modifier.HasFlag(ParameterModifier.In))  WriteCharBuffer("in", buffer, ref offset);
+      else if (modifier.HasFlag(ParameterModifier.In)) WriteCharBuffer("in", buffer, ref offset);
    }
    
    private static void WriteCharBuffer(
@@ -47,7 +47,7 @@ public static class ParameterModifierExtensions
    {
       var size = 0;
 
-      if (modifier.HasFlag(ParameterModifier.This))   size += 4 + 1;
+      if (modifier.HasFlag(ParameterModifier.This)) size += 4 + 1;
       if (modifier.HasFlag(ParameterModifier.Params)) size += 6 + 1;
       if (modifier.HasFlag(ParameterModifier.Scoped)) size += 6 + 1;
       if (modifier.HasFlag(ParameterModifier.ReadOnly) 
