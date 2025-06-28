@@ -65,14 +65,14 @@ public ref struct ParameterBuilderInfo : IByteSerializable<ParameterBuilderInfo>
       instance.Modifiers = buffer.ReadLittleEndian<ParameterModifier>(out read);
       buffer = buffer[read..];
 
-      return CalculateByteLength(instance);
+      return CalculateByteLength(in instance);
    }
 
    public static int CalculateByteLength(scoped in ParameterBuilderInfo instance)
    {
-      return instance.Name.ByteLength 
-             + instance.TypeName.ByteLength 
-             + instance.Attributes.ByteLength 
+      return RefStringView.CalculateByteLength(instance.Name)
+             + RefStringView.CalculateByteLength(instance.TypeName)
+             + RefStringView.CalculateByteLength(instance.Attributes)
              + sizeof(ParameterModifier);
    }
 }

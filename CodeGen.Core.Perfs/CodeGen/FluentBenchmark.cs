@@ -65,9 +65,10 @@ public class FluentBenchmark
          .IsStatic()
          .Done(); // write it to the current class generic temporary buffer
       test.Render(); // flush the static constructor header
-
+      
       builder.Writer.WriteLine("StaticFieldTest = \"Look a string!\";");
       builder.Writer.CloseBody();
+      builder.Writer.WriteLine();
       
       var instanceConstructor = test.AddConstructor(AccessModifier.Public);
       instanceConstructor
@@ -78,6 +79,7 @@ public class FluentBenchmark
          .Done(); 
       test.Render();
       builder.Writer.CloseBody();
+      builder.Writer.WriteLine();
 
       var instanceConstructorImpl = test.AddConstructor(AccessModifier.Public);
       instanceConstructorImpl
@@ -88,8 +90,10 @@ public class FluentBenchmark
       builder.Writer.WriteLine("_numberField = number;");
       builder.Writer.WriteLine("_numberField1 = number1;");
       builder.Writer.CloseBody();
+
       
       
+      builder.Writer.CloseBody();
       
       // WrittenSpan is full class as ReadOnlySpan<char> if you can work with that and has no additional heap allocation
       var cha = builder.Writer.WrittenSpan[0];

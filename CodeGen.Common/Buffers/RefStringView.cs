@@ -46,7 +46,11 @@ public readonly ref struct RefStringView : IByteSerializable<RefStringView>
       using var writer = new ByteWriter(buffer);
 
       writer.WriteLittleEndian(length);
-      writer.WriteStringRaw(instance.Span);
+
+      if (length > 0)
+      {
+         writer.WriteStringRaw(instance.Span);
+      }
    }
 
    public static int Read(ReadOnlySpan<byte> buffer, out RefStringView instance)

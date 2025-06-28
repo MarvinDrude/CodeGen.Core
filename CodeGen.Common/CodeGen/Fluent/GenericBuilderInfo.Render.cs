@@ -1,4 +1,5 @@
-﻿using CodeGen.Common.Buffers;
+﻿using System.Diagnostics.CodeAnalysis;
+using CodeGen.Common.Buffers;
 
 namespace CodeGen.Common.CodeGen.Fluent;
 

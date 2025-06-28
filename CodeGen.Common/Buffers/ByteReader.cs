@@ -87,6 +87,11 @@ public ref struct ByteReader
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public ReadOnlySpan<char> ReadStringRaw(int size)
    {
+      if (size == 0)
+      {
+         return [];
+      }
+      
       var raw = _buffer.Slice(_position, size);
       var chars = MemoryMarshal.Cast<byte, char>(raw);
 

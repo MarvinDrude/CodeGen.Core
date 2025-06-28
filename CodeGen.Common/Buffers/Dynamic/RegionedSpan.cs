@@ -245,6 +245,17 @@ public ref struct RegionedSpan : IDisposable
       _position += _headerGrowSize;
 
       _headerSize = newSize;
+      
+      var reader = new ByteReader(_totalBuffer.Owner.Span);
+      var writer = new ByteWriter(_totalBuffer.Owner.Span);
+      
+      for (var e = 0; e < _regionCount; e++)
+      {
+         writer.Position = reader.Position = HeaderEntrySize * e;
+         writer.WriteLittleEndian(reader.ReadLittleEndian<int>() + _headerGrowSize);
+      }
+
+      writer.Dispose();
    }
 
    internal const int DefaultHeaderSize = 64;

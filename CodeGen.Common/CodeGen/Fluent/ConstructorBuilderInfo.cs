@@ -12,6 +12,7 @@ public ref struct ConstructorBuilderInfo : IByteSerializable<ConstructorBuilderI
 {
    internal AccessModifier AccessModifier;
    internal bool IsStatic;
+   internal bool IsSignatureOnly;
 
    internal bool HasBaseCall;
    internal bool HasThisCall;
@@ -60,6 +61,7 @@ public ref struct ConstructorBuilderInfo : IByteSerializable<ConstructorBuilderI
       packed.Set(0, instance.IsStatic);
       packed.Set(1, instance.HasBaseCall);
       packed.Set(2, instance.HasThisCall);
+      packed.Set(3, instance.IsSignatureOnly);
 
       buffer[0] = packed.RawByte;
       buffer = buffer[1..];
@@ -103,9 +105,11 @@ public ref struct ConstructorBuilderInfo : IByteSerializable<ConstructorBuilderI
       instance.IsStatic = packed.Get(0);
       instance.HasBaseCall = packed.Get(1);
       instance.HasThisCall = packed.Get(2);
+      instance.IsSignatureOnly = packed.Get(3);
 
       instance.BaseParameterOffset = read + 1 + sizeof(int) + sizeof(int);
       instance.BaseParameterLength = buffer.ReadLittleEndian<int>(out read);
+      buffer = buffer[read..];
 
       instance.ParameterOffset = instance.BaseParameterOffset + instance.BaseParameterLength;
       instance.ParameterLength = buffer.ReadLittleEndian<int>(out read);
@@ -128,6 +132,13 @@ public static partial class ConstructorBuilderInfoExtensions
    public static ref ConstructorBuilderInfo IsStatic(this ref ConstructorBuilderInfo info, bool set = true)
    {
       info.IsStatic = set;
+      return ref info;
+   }
+   
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ref ConstructorBuilderInfo IsSignatureOnly(this ref ConstructorBuilderInfo info, bool set = true)
+   {
+      info.IsSignatureOnly = set;
       return ref info;
    }
    

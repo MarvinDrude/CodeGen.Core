@@ -130,7 +130,7 @@ public ref struct BufferWriter<T> : IDisposable
 
       _position += span.Length;
    }
-
+   
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public Span<T> AcquireSpan(int length, bool movePosition = true)
    {
