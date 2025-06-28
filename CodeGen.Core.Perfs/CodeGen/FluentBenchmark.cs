@@ -70,7 +70,14 @@ public class FluentBenchmark
       
       var instanceConstructor = test.AddConstructor(AccessModifier.Public);
       instanceConstructor
-         .WithThisCall();
+         .WithThisCall()
+         .AddThisParameter("number") // add one parameter to : this() call
+         .Done(); 
+      test.Render();
+      builder.Writer.CloseBody();
+
+      var instanceConstructorImpl = test.AddConstructor(AccessModifier.Public);
+      
       
       // WrittenSpan is full class as ReadOnlySpan<char> if you can work with that and has no additional heap allocation
       var cha = builder.Writer.WrittenSpan[0];

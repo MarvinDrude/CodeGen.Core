@@ -103,4 +103,15 @@ public static partial class ConstructorBuilderInfoExtensions
       builder.AddTemporaryData(builder.RegionIndexConstructorParameters, in str);
       return ref info;
    }
+
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static ref ConstructorBuilderInfo AddParameter(
+      this ref ConstructorBuilderInfo info, 
+      ReadOnlySpan<char> typeName,
+      ReadOnlySpan<char> name,
+      ReadOnlySpan<char> attributes = default,
+      )
+   {
+      
+   }
 }
