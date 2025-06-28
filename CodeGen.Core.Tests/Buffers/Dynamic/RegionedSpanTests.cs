@@ -165,4 +165,58 @@ public class RegionedSpanTests
       await Assert.That(result.Count).IsEqualTo(0);
       await Assert.That(spanLength).IsEqualTo(0);
    }
+   
+   [Test]
+   public async Task IterateRegionGrowHeaderSimpleTests()
+   {
+      var regioned = new RegionedSpan(stackalloc byte[64 + 20], 4 * 4 * 2);
+
+      var index1 = regioned.AddRegion(5);
+
+      RefStringView str1 = "Test1234";
+      regioned.AddToRegion(index1, in str1);
+      RefStringView str2 = "3454lalaladsadsa";
+      regioned.AddToRegion(index1, in str2);
+      
+      var index2 = regioned.AddRegion(5);
+      var index3 = regioned.AddRegion(5);
+      
+      List<string> result = [];
+
+      foreach (var strView in regioned.GetRegionEnumerator<RefStringView>(index1))
+      {
+         result.Add(strView.ToString());
+      }
+      
+      await Assert.That(result.Count).IsEqualTo(2);
+      await Assert.That(result[0]).IsEqualTo("Test1234");
+      await Assert.That(result[1]).IsEqualTo("3454lalaladsadsa");
+   }
+   
+   [Test]
+   public async Task IterateRegionGrowHeaderTwoSimpleTests()
+   {
+      var regioned = new RegionedSpan(stackalloc byte[64 + 20], 4 * 4 * 2);
+
+      var index1 = regioned.AddRegion(5);
+
+      RefStringView str1 = "Test1234";
+      regioned.AddToRegion(index1, in str1);
+      RefStringView str2 = "3454lalaladsadsa";
+      regioned.AddToRegion(index1, in str2);
+      
+      var index2 = regioned.AddRegion(5);
+      var index3 = regioned.AddRegion(5);
+      
+      List<string> result = [];
+
+      foreach (var strView in regioned.GetRegionEnumerator<RefStringView>(index1))
+      {
+         result.Add(strView.ToString());
+      }
+      
+      await Assert.That(result.Count).IsEqualTo(2);
+      await Assert.That(result[0]).IsEqualTo("Test1234");
+      await Assert.That(result[1]).IsEqualTo("3454lalaladsadsa");
+   }
 }

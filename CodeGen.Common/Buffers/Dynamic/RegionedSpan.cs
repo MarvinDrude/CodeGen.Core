@@ -40,7 +40,7 @@ public ref struct RegionedSpan : IDisposable
       _totalBuffer = new BufferWriter<byte>(buffer);
       _regionCount = 0;
 
-      _headerSize = Math.Max(initialHeaderSize, DefaultHeaderSize);
+      _headerSize = initialHeaderSize == -1 ? DefaultHeaderSize : initialHeaderSize;
       _headerGrowSize = _headerSize;
       _position = _headerSize;
    }
@@ -241,13 +241,19 @@ public ref struct RegionedSpan : IDisposable
       var oldSize = _headerSize;
       var newSize = _headerSize + _headerGrowSize;
       
-      _totalBuffer.Move(oldSize, _totalBuffer.Capacity - oldSize, newSize, false);
-      _position += _headerGrowSize;
-
-      _headerSize = newSize;
-      
       var reader = new ByteReader(_totalBuffer.Owner.Span);
       var writer = new ByteWriter(_totalBuffer.Owner.Span);
+
+      var length = _position - oldSize;
+
+      if (length > 0)
+      {
+         _totalBuffer.Move(oldSize, length, newSize, false);
+      }
+      
+      _position += _headerGrowSize;
+      _headerSize = newSize;
+      
       
       for (var e = 0; e < _regionCount; e++)
       {

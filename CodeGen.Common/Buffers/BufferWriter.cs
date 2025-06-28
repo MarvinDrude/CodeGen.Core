@@ -153,6 +153,11 @@ public ref struct BufferWriter<T> : IDisposable
    {
       if (fromLength == 0 || fromStart == toStart)
       {
+         if (toStart > _owner.Span.Length)
+         {
+            ResizeSpan(toStart - _owner.Span.Length);
+         }
+         
          return;
       }
 

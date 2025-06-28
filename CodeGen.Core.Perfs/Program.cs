@@ -20,6 +20,7 @@ BenchmarkRunner.Run<FluentBenchmark>();
 #else
 
 new FluentBenchmark().SimpleNoAllocationBenchmark();
+//new FluentBenchmark().CompareCodeGenHelpersBuilder();
 
 // var builder = new CodeBuilder(
 //    stackalloc char[12],
