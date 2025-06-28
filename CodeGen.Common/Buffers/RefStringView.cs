@@ -19,6 +19,12 @@ public readonly ref struct RefStringView : IByteSerializable<RefStringView>
       get => _span.Length;
    }
 
+   public int ByteLength
+   {
+      [MethodImpl(MethodImplOptions.AggressiveInlining)]
+      get => _span.Length * sizeof(char);
+   }
+
    private readonly ReadOnlySpan<char> _span;
    
    public RefStringView(ReadOnlySpan<char> span)

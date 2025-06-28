@@ -13,8 +13,14 @@ public static partial class ClassBuilderInfoExtensions
 
       if (!info.IsHeaderRendered)
       {
-         RenderHeader(ref info);
+         info.RenderHeader();
          info.IsHeaderRendered = true;
+      }
+
+      if (info.ConstructorCount > 0)
+      {
+         info.RenderConstructors();
+         info.ConstructorCount = 0;
       }
       
       return ref info.Builder;

@@ -56,6 +56,7 @@ public class FluentBenchmark
       builder.Writer.WriteLine();
 
       builder.Writer.WriteLine("private int _numberField;");
+      builder.Writer.WriteLine("private int _numberField1;");
       builder.Writer.WriteLine();
       // you can write normal lines and text between Render() flushes whenever you need custom code
       
@@ -72,11 +73,22 @@ public class FluentBenchmark
       instanceConstructor
          .WithThisCall()
          .AddThisParameter("number") // add one parameter to : this() call
+         .AddThisParameter("0")
+         .AddParameter("int", "number")
          .Done(); 
       test.Render();
       builder.Writer.CloseBody();
 
       var instanceConstructorImpl = test.AddConstructor(AccessModifier.Public);
+      instanceConstructorImpl
+         .AddParameter("int", "number")
+         .AddParameter("int", "number1")
+         .Done();
+      test.Render();
+      builder.Writer.WriteLine("_numberField = number;");
+      builder.Writer.WriteLine("_numberField1 = number1;");
+      builder.Writer.CloseBody();
+      
       
       
       // WrittenSpan is full class as ReadOnlySpan<char> if you can work with that and has no additional heap allocation

@@ -12,6 +12,7 @@ public ref partial struct CodeBuilder
       RegionIndexClassGenericConstraints = TemporaryData.AddRegion(0);
 
       RegionIndexConstructors = TemporaryData.AddRegion(0);
+      RegionIndexConstructorBaseParameters = TemporaryData.AddRegion(0);
       RegionIndexConstructorParameters = TemporaryData.AddRegion(0);
    }
 
