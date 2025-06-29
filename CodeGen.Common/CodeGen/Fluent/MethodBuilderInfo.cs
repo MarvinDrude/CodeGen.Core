@@ -1,12 +1,14 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CodeGen.Common.Buffers;
+using CodeGen.Common.Buffers.Dynamic;
+using CodeGen.Common.Buffers.Utils;
 using CodeGen.Common.CodeGen.Models.Common;
 
 namespace CodeGen.Common.CodeGen.Fluent;
 
 [StructLayout(LayoutKind.Sequential)]
-public ref struct MethodBuilderInfo
+public ref struct MethodBuilderInfo : IByteSerializable<MethodBuilderInfo>
 {
    internal AccessModifier AccessModifier;
    internal MethodModifier Modifiers;
@@ -19,8 +21,10 @@ public ref struct MethodBuilderInfo
    internal int ParameterOffset;
    internal int ParameterCount;
    internal int ParameterLength;
-   
+
+   internal int GenericParameterOffset;
    internal int GenericParameterCount;
+   internal int GenericParameterLength;
    
    private readonly ref byte _builderReference;
    internal ref ClassBuilderInfo ClassBuilder
@@ -36,6 +40,119 @@ public ref struct MethodBuilderInfo
 
       AccessModifier = AccessModifier.Public;
       Modifiers = MethodModifier.None;
+   }
+
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public ref ClassBuilderInfo Done()
+   {
+      ref var builder = ref ClassBuilder.Builder;
+      
+      builder.AddTemporaryData(builder.RegionIndexConstructors, in this);
+      
+      builder.ClearTemporaryData(builder.RegionIndexMethodParameters);
+      builder.ClearTemporaryData(builder.RegionIndexMethodGenerics);
+      return ref ClassBuilder;
+   }
+
+   public static void Write(scoped Span<byte> buffer, scoped in MethodBuilderInfo instance)
+   {
+      ref var builder = ref instance.ClassBuilder.Builder;
+      
+      var written = instance.AccessModifier.WriteLittleEndian(buffer);
+      buffer = buffer[written..];
+      
+      written = instance.Modifiers.WriteLittleEndian(buffer);
+      buffer = buffer[written..];
+      
+      var packed = new PackedBools();
+      packed.Set(0, instance.IsSignatureOnly);
+      
+      buffer[0] = packed.RawByte;
+      buffer = buffer[1..];
+
+      written = RefStringView.CalculateByteLength(in instance.Name);
+      RefStringView.Write(buffer, in instance.Name);
+      buffer = buffer[written..];
+      
+      written = RefStringView.CalculateByteLength(in instance.ReturnType);
+      RefStringView.Write(buffer, in instance.ReturnType);
+      buffer = buffer[written..];
+      
+      var regionMeta = builder.TemporaryData.GetRegionMetadata(builder.RegionIndexMethodGenerics);
+      
+      regionMeta.InnerOffset.WriteLittleEndian(buffer);
+      buffer = buffer[sizeof(int)..];
+      
+      instance.ParameterLength.WriteLittleEndian(buffer);
+      buffer = buffer[sizeof(int)..];
+      
+      foreach (var generic in builder.GetTemporaryEnumerator<GenericBuilderInfo>(
+                  builder.RegionIndexMethodGenerics))
+      {
+         var length = GenericBuilderInfo.CalculateByteLength(in generic);
+         GenericBuilderInfo.Write(buffer, in generic);
+         
+         buffer = buffer[length..];
+      }
+      
+      foreach (var parameter in builder.GetTemporaryEnumerator<ParameterBuilderInfo>(
+                  builder.RegionIndexMethodParameters))
+      {
+         var length = ParameterBuilderInfo.CalculateByteLength(in parameter);
+         ParameterBuilderInfo.Write(buffer, in parameter);
+         
+         buffer = buffer[length..];
+      }
+   }
+
+   public static int Read(ReadOnlySpan<byte> buffer, out MethodBuilderInfo instance)
+   {
+      instance = new MethodBuilderInfo
+      {
+         AccessModifier = buffer.ReadLittleEndian<AccessModifier>(out var read)
+      };
+      
+      buffer = buffer[read..];
+      instance.Modifiers = buffer.ReadLittleEndian<MethodModifier>(out read);
+      buffer = buffer[read..];
+      
+      var packed = new PackedBools(buffer[0]);
+      buffer = buffer[1..];
+
+      instance.IsSignatureOnly = packed.Get(0);
+
+      var nameLength = read = RefStringView.Read(buffer, out instance.Name);
+      buffer = buffer[read..];
+      
+      var returnLength = read = RefStringView.Read(buffer, out instance.ReturnType);
+      buffer = buffer[read..];
+
+      var lengthGenerics = buffer.ReadLittleEndian<int>(out read);
+      buffer = buffer[read..];
+      
+      var lengthParameters = buffer.ReadLittleEndian<int>(out read);
+      buffer = buffer[read..];
+      
+      instance.GenericParameterOffset = 
+         sizeof(int) * 2 + 1 + sizeof(AccessModifier) + sizeof(MethodModifier)
+         + nameLength + returnLength;
+      instance.GenericParameterLength = lengthGenerics;
+
+      instance.ParameterOffset = instance.GenericParameterOffset + instance.GenericParameterLength;
+      instance.ParameterLength = lengthParameters;
+      
+      return instance.ParameterOffset + instance.ParameterLength;
+   }
+
+   public static int CalculateByteLength(scoped in MethodBuilderInfo instance)
+   {
+      ref var builder = ref instance.ClassBuilder.Builder;
+      var regionMeta = builder.TemporaryData.GetRegionMetadata(builder.RegionIndexMethodGenerics);
+      
+      return sizeof(AccessModifier) + sizeof(MethodModifier) + 1 
+             + RefStringView.CalculateByteLength(in instance.Name)
+             + RefStringView.CalculateByteLength(in instance.ReturnType)
+             + instance.ParameterLength + regionMeta.InnerOffset;
    }
 }
 

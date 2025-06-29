@@ -22,6 +22,12 @@ public static partial class ClassBuilderInfoExtensions
          info.RenderConstructors();
          info.ConstructorCount = 0;
       }
+
+      if (info.MethodCount > 0)
+      {
+         info.RenderMethods();
+         info.MethodCount = 0;
+      }
       
       return ref info.Builder;
    }

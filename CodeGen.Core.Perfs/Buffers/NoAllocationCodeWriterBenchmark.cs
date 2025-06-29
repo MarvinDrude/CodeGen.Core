@@ -4,10 +4,11 @@ using BenchmarkDotNet.Engines;
 using CodeGen.Common.Buffers;
 using CodeGen.Common.CodeGen;
 using CodeGen.Common.CodeGen.Immediate;
+using CodeGen.Core.Perfs.Config;
 
 namespace CodeGen.Core.Perfs.Buffers;
 
-[SimpleJob(RunStrategy.Throughput, iterationCount: 2)]
+[SimpleJob(RunStrategy.Throughput, iterationCount: 2), Config(typeof(BenchmarkConfig))]
 [MinColumn, MaxColumn, MeanColumn, MedianColumn, MemoryDiagnoser]
 public class NoAllocationCodeWriterBenchmark
 {

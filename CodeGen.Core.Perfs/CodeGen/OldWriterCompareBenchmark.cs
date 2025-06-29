@@ -3,6 +3,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using CodeGen.Common.CodeGen.Immediate;
 using CodeGen.Common.CodeGen.Models.Methods;
+using CodeGen.Core.Perfs.Config;
 using CodeGenHelpers;
 using Microsoft.CodeAnalysis;
 using OldCodeWriter;
@@ -10,7 +11,7 @@ using CodeBuilder = CodeGen.Common.CodeGen.CodeBuilder;
 
 namespace CodeGen.Core.Perfs.CodeGen;
 
-[SimpleJob(RunStrategy.Throughput, iterationCount: 6)]
+[SimpleJob(RunStrategy.Throughput, iterationCount: 6), Config(typeof(BenchmarkConfig))]
 [MinColumn, MaxColumn, MeanColumn, MedianColumn, MemoryDiagnoser]
 public class OldWriterCompareBenchmark
 {
