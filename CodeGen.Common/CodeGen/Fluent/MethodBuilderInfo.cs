@@ -47,7 +47,7 @@ public ref struct MethodBuilderInfo : IByteSerializable<MethodBuilderInfo>
    {
       ref var builder = ref ClassBuilder.Builder;
       
-      builder.AddTemporaryData(builder.RegionIndexConstructors, in this);
+      builder.AddTemporaryData(builder.RegionIndexMethods, in this);
       
       builder.ClearTemporaryData(builder.RegionIndexMethodParameters);
       builder.ClearTemporaryData(builder.RegionIndexMethodGenerics);
@@ -89,8 +89,13 @@ public ref struct MethodBuilderInfo : IByteSerializable<MethodBuilderInfo>
       foreach (var generic in builder.GetTemporaryEnumerator<GenericBuilderInfo>(
                   builder.RegionIndexMethodGenerics))
       {
+         var render = generic with
+         {
+            _builderReference = ref Unsafe.As<ClassBuilderInfo, byte>(ref instance.ClassBuilder)
+         };
+         
          var length = GenericBuilderInfo.CalculateByteLength(in generic);
-         GenericBuilderInfo.Write(buffer, in generic);
+         GenericBuilderInfo.Write(buffer, in render);
          
          buffer = buffer[length..];
       }

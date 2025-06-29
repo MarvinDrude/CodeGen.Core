@@ -1,4 +1,6 @@
-﻿namespace CodeGen.Common.CodeGen.Fluent;
+﻿using CodeGen.Common.CodeGen.Models.Common;
+
+namespace CodeGen.Common.CodeGen.Fluent;
 
 public static partial class MethodBuilderInfoExtensions
 {
@@ -29,6 +31,37 @@ public static partial class MethodBuilderInfoExtensions
       scoped MethodBuilderInfo info,
       int offset)
    {
+      var accessLength = info.AccessModifier.GetCharBufferSize();
+
+      if (accessLength > 0)
+      {
+         var accessSpan = builder.Writer.AcquireSpanIndented(accessLength + 1);
+         info.AccessModifier.FillCharBuffer(accessSpan);
+
+         accessSpan[^1] = ' ';
+      }
+
+      var modifierLength = info.Modifiers.GetCharBufferSize();
+
+      if (modifierLength > 0)
+      {
+         var modifierSpan = builder.Writer.AcquireSpanIndented(modifierLength + 1);
+         info.Modifiers.FillCharBuffer(modifierSpan);
+
+         modifierSpan[^1] = ' ';
+      }
       
+      builder.Writer.Write(info.ReturnType.Span);
+      builder.Writer.Write(" ");
+      builder.Writer.Write(info.Name.Span);
+
+      if (info.ParameterLength > 0)
+      {
+         
+      }
+      else
+      {
+         
+      }
    }
 }

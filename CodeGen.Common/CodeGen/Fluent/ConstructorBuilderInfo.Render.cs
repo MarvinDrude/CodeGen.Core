@@ -1,4 +1,5 @@
-﻿using CodeGen.Common.CodeGen.Models.Common;
+﻿using CodeGen.Common.Buffers;
+using CodeGen.Common.CodeGen.Models.Common;
 
 namespace CodeGen.Common.CodeGen.Fluent;
 
@@ -61,6 +62,40 @@ public static partial class ConstructorBuilderInfoExtensions
       else
       {
          builder.Writer.WriteLine("()");
+      }
+
+      if (info.HasBaseCall || info.HasThisCall)
+      {
+         builder.Writer.UpIndent();
+         builder.Writer.Write(info.HasBaseCall ? ": base(" : ": this(");
+
+         if (info.BaseParameterLength > 0)
+         {
+            var first = true;
+            var bOffset = info.BaseParameterOffset;
+            var bOffsetEnd = bOffset + info.BaseParameterLength;
+            
+            span = span[bOffset..];
+
+            while (bOffset < bOffsetEnd)
+            {
+               var consumed = RefStringView.Read(span, out var baseParameter);
+               
+               span = span[consumed..];
+               bOffset += consumed;
+               
+               if (!first)
+               {
+                  builder.Writer.Write(", ");
+               }
+               first = false;
+               
+               builder.Writer.Write(baseParameter.Span);
+            }
+         }
+
+         builder.Writer.WriteLine(")");
+         builder.Writer.DownIndent();
       }
 
       builder.Writer.OpenBody();

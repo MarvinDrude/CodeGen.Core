@@ -38,15 +38,19 @@ public static partial class ClassBuilderInfoExtensions
 
       var accessLength = info.AccessModifier.GetCharBufferSize();
       var modifiersLength = info.ClassModifiers.GetCharBufferSize();
+      var indented = false;
 
       if (accessLength > 0)
       {
-         var accessSpan = builder.Writer.AcquireSpan(accessLength);
+         var accessSpan = builder.Writer.AcquireSpanIndented(accessLength);
          info.AccessModifier.FillCharBuffer(in accessSpan);
+         indented = true;
       }
 
       var offset = accessLength > 0 ? 1 : 0;
-      var modifiersSpan = builder.Writer.AcquireSpan(modifiersLength + offset);
+      var modifiersSpan = indented 
+         ? builder.Writer.AcquireSpan(modifiersLength + offset)
+         : builder.Writer.AcquireSpanIndented(modifiersLength + offset);
       
       if (accessLength > 0)
       {

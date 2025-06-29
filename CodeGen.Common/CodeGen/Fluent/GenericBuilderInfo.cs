@@ -19,7 +19,7 @@ public ref struct GenericBuilderInfo : IByteSerializable<GenericBuilderInfo>
    internal int RegionIndexGenerics;
    internal int RegionIndexConstraints;
    
-   private readonly ref byte _builderReference;
+   internal ref byte _builderReference;
    internal ref ClassBuilderInfo ClassBuilder
    {
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -38,7 +38,7 @@ public ref struct GenericBuilderInfo : IByteSerializable<GenericBuilderInfo>
       _builderReference = ref Unsafe.As<ClassBuilderInfo, byte>(ref builder);
       Name = new RefStringView(name);
    }
-
+   
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public ref ClassBuilderInfo Done()
    {

@@ -37,13 +37,6 @@ public class FluentBenchmark
       builder.NameSpace.Path = "My.NameSpace";
       builder.NameSpace.Render();
 
-      builder.Class.Declaration = $"public abstract class Test";
-      builder.Class.BaseDeclarations = [
-         "BaseClassOne",
-         "IInterfaceTwo"
-      ];
-      builder.Class.RenderDeclaration();
-
       // due to the limitation of possible zero heap allocation + the temporary buffer
       // u will always need to create classes one at a time per CodeBuilder until u flush with Render()
       var test = builder.CreateClass();
@@ -117,18 +110,17 @@ public class FluentBenchmark
       genericMethod
          .IsInternal()
          .AddModifier(MethodModifier.Async | MethodModifier.Static)
-         .AddParameter("TMethod", "input");
-
+         .AddParameter("TMethod", "input")
+         .SetReturnType("Task<bool>");
+      
       var genericMethodParameter = genericMethod.AddGenericParameter("TMethod");
       genericMethodParameter
          .AddConstraint("notnull")
          .Done();
-
+      
       genericMethod.Done();
       test.Render();
 
-      builder.Writer.CloseBody();
-      
       builder.Writer.CloseBody();
       
       // WrittenSpan is full class as ReadOnlySpan<char> if you can work with that and has no additional heap allocation
