@@ -112,7 +112,19 @@ public class FluentBenchmark
       builder.Writer.WriteLine("_numberField1 = number1;");
       builder.Writer.CloseBody();
 
-      
+      var genericMethod = test.AddMethod("GenericMethodName");
+      genericMethod
+         .IsInternal()
+         .AddModifier(MethodModifier.Async | MethodModifier.Static)
+         .AddParameter("TMethod", "input");
+
+      var genericMethodParameter = genericMethod.AddGenericParameter("TMethod");
+      genericMethodParameter
+         .AddConstraint("notnull")
+         .Done();
+      test.Render();
+
+      builder.Writer.CloseBody();
       
       builder.Writer.CloseBody();
       

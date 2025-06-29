@@ -202,7 +202,6 @@ public static partial class ConstructorBuilderInfoExtensions
       return ref info;
    }
 
-   [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static ref ConstructorBuilderInfo AddParameter(
       this ref ConstructorBuilderInfo info,
       ReadOnlySpan<char> typeName,

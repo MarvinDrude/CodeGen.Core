@@ -14,6 +14,11 @@ public ref partial struct CodeBuilder
       RegionIndexConstructors = TemporaryData.AddRegion(0);
       RegionIndexConstructorBaseParameters = TemporaryData.AddRegion(0);
       RegionIndexConstructorParameters = TemporaryData.AddRegion(0);
+
+      RegionIndexMethods = TemporaryData.AddRegion(0);
+      RegionIndexMethodParameters = TemporaryData.AddRegion(0);
+      RegionIndexMethodGenerics = TemporaryData.AddRegion(0);
+      RegionIndexMethodGenericConstraints = TemporaryData.AddRegion(0);
    }
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]

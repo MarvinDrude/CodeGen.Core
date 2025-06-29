@@ -15,6 +15,9 @@ public ref struct GenericBuilderInfo : IByteSerializable<GenericBuilderInfo>
 
    internal int Offset;
    internal int ByteLength;
+
+   internal int RegionIndexGenerics;
+   internal int RegionIndexConstraints;
    
    private readonly ref byte _builderReference;
    internal ref ClassBuilderInfo ClassBuilder
@@ -23,8 +26,15 @@ public ref struct GenericBuilderInfo : IByteSerializable<GenericBuilderInfo>
       get => ref Unsafe.As<byte, ClassBuilderInfo>(ref _builderReference);
    }
 
-   public GenericBuilderInfo(ref ClassBuilderInfo builder, ReadOnlySpan<char> name)
+   public GenericBuilderInfo(
+      ref ClassBuilderInfo builder, 
+      ReadOnlySpan<char> name,
+      int regionIndexGenerics,
+      int regionIndexConstraints)
    {
+      RegionIndexGenerics = regionIndexGenerics;
+      RegionIndexConstraints = regionIndexConstraints;
+      
       _builderReference = ref Unsafe.As<ClassBuilderInfo, byte>(ref builder);
       Name = new RefStringView(name);
    }
@@ -34,9 +44,9 @@ public ref struct GenericBuilderInfo : IByteSerializable<GenericBuilderInfo>
    {
       ref var builder = ref ClassBuilder.Builder;
       
-      builder.AddTemporaryData(builder.RegionIndexClassGenerics, in this);
+      builder.AddTemporaryData(RegionIndexGenerics, in this);
       
-      builder.ClearTemporaryData(builder.RegionIndexClassGenericConstraints);
+      builder.ClearTemporaryData(RegionIndexConstraints);
       return ref ClassBuilder;
    }
 
@@ -56,7 +66,7 @@ public ref struct GenericBuilderInfo : IByteSerializable<GenericBuilderInfo>
       buffer = buffer[sizeof(int)..];
 
       foreach (var constraint in builder.GetTemporaryEnumerator<RefStringView>(
-                  builder.RegionIndexClassGenericConstraints))
+                  instance.RegionIndexConstraints))
       {
          var length = RefStringView.CalculateByteLength(in constraint);
          RefStringView.Write(buffer, in constraint);
@@ -100,7 +110,7 @@ public static partial class GenericBuilderInfoExtensions
    {
       var view = new RefStringView(constraint);
       
-      info.ClassBuilder.Builder.AddTemporaryData(info.ClassBuilder.Builder.RegionIndexClassGenericConstraints, view);
+      info.ClassBuilder.Builder.AddTemporaryData(info.RegionIndexConstraints, view);
       info.ConstraintLength += RefStringView.CalculateByteLength(in view);
       info.ConstraintCount++;
       

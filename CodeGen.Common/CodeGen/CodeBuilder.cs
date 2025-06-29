@@ -59,7 +59,7 @@ public ref partial struct CodeBuilder : IDisposable
    {
       TemporaryData.Dispose();
       
-      TemporaryData = new RegionedSpan(buffer);
+      TemporaryData = new RegionedSpan(buffer, RegionHeaderSize);
       EnsureTemporaryRegions();
    }
    
@@ -70,7 +70,7 @@ public ref partial struct CodeBuilder : IDisposable
       
       var owner = BufferAllocator<byte>.CreatePooled(1024, true);
       
-      TemporaryData = new RegionedSpan(owner);
+      TemporaryData = new RegionedSpan(owner, RegionHeaderSize);
       EnsureTemporaryRegions();
    }
    
@@ -93,4 +93,11 @@ public ref partial struct CodeBuilder : IDisposable
    public int RegionIndexConstructors;
    public int RegionIndexConstructorBaseParameters;
    public int RegionIndexConstructorParameters;
+
+   public int RegionIndexMethods;
+   public int RegionIndexMethodGenerics;
+   public int RegionIndexMethodGenericConstraints;
+   public int RegionIndexMethodParameters;
+
+   private const int RegionHeaderSize = 4 * 4 * 10;
 }

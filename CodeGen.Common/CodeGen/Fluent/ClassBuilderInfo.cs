@@ -18,6 +18,7 @@ public ref struct ClassBuilderInfo
    internal bool IsHeaderRendered;
    internal int GenericParameterCount;
    internal int ConstructorCount;
+   internal int MethodCount;
    
    private readonly ref byte _builderReference;
    internal ref CodeBuilder Builder
@@ -81,9 +82,9 @@ public static partial class ClassBuilderInfoExtensions
    public static ref ClassBuilderInfo IsProtectedInternal(this ref ClassBuilderInfo info) => ref info.WithAccessModifier(AccessModifier.ProtectedInternal);
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static ref ClassBuilderInfo AddClassModifier(this ref ClassBuilderInfo info, ClassModifier accessModifier)
+   public static ref ClassBuilderInfo AddClassModifier(this ref ClassBuilderInfo info, ClassModifier modifier)
    {
-      info.ClassModifiers |= accessModifier;
+      info.ClassModifiers |= modifier;
       return ref info;
    }
    
@@ -99,9 +100,9 @@ public static partial class ClassBuilderInfoExtensions
    public static ref ClassBuilderInfo IsAbstract(this ref ClassBuilderInfo info) => ref info.AddClassModifier(ClassModifier.Abstract);
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static ref ClassBuilderInfo RemoveClassModifier(this ref ClassBuilderInfo info, ClassModifier accessModifier)
+   public static ref ClassBuilderInfo RemoveClassModifier(this ref ClassBuilderInfo info, ClassModifier modifier)
    {
-      info.ClassModifiers &= ~accessModifier;
+      info.ClassModifiers &= ~modifier;
       return ref info;
    }
    
@@ -126,8 +127,13 @@ public static partial class ClassBuilderInfoExtensions
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static GenericBuilderInfo AddGenericParameter(this ref ClassBuilderInfo info, ReadOnlySpan<char> name)
    {
+      ref var builder = ref info.Builder;
+      
       info.GenericParameterCount++;
-      return new GenericBuilderInfo(ref info, name);
+      return new GenericBuilderInfo(
+         ref info, name, 
+         builder.RegionIndexClassGenerics, 
+         builder.RegionIndexClassGenericConstraints);
    }
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -136,25 +142,11 @@ public static partial class ClassBuilderInfoExtensions
       info.ConstructorCount++;
       return new ConstructorBuilderInfo(ref info, accessModifier);
    }
-}
 
-
-public readonly ref partial  struct ReadOnlySpanWrapper
-{
-   private readonly ReadOnlySpan<int> _data;
-
-   public ReadOnlySpanWrapper(ReadOnlySpan<int> data)
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public static MethodBuilderInfo AddMethod(this ref ClassBuilderInfo info, ReadOnlySpan<char> name)
    {
-      _data = data;
-   }
-
-   public readonly partial ref int GetElementRef(int index);
-}
-
-public readonly ref partial struct ReadOnlySpanWrapper
-{
-   public readonly partial ref int GetElementRef(int index)
-   {
-      return ref Unsafe.AsRef(0);
+      info.MethodCount++;
+      return new MethodBuilderInfo(ref info, name);
    }
 }
