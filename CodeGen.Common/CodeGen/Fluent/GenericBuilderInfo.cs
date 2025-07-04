@@ -18,6 +18,8 @@ public ref struct GenericBuilderInfo : IByteSerializable<GenericBuilderInfo>
 
    internal int RegionIndexGenerics;
    internal int RegionIndexConstraints;
+
+   internal bool ClearDataOnDone;
    
    internal ref byte _builderReference;
    internal ref ClassBuilderInfo ClassBuilder
@@ -30,10 +32,12 @@ public ref struct GenericBuilderInfo : IByteSerializable<GenericBuilderInfo>
       ref ClassBuilderInfo builder, 
       ReadOnlySpan<char> name,
       int regionIndexGenerics,
-      int regionIndexConstraints)
+      int regionIndexConstraints,
+      bool clearDataOnDone)
    {
       RegionIndexGenerics = regionIndexGenerics;
       RegionIndexConstraints = regionIndexConstraints;
+      ClearDataOnDone = clearDataOnDone;
       
       _builderReference = ref Unsafe.As<ClassBuilderInfo, byte>(ref builder);
       Name = new RefStringView(name);
@@ -45,8 +49,12 @@ public ref struct GenericBuilderInfo : IByteSerializable<GenericBuilderInfo>
       ref var builder = ref ClassBuilder.Builder;
       
       builder.AddTemporaryData(RegionIndexGenerics, in this);
+
+      if (ClearDataOnDone)
+      {
+         builder.ClearTemporaryData(RegionIndexConstraints);
+      }
       
-      builder.ClearTemporaryData(RegionIndexConstraints);
       return ref ClassBuilder;
    }
 

@@ -99,7 +99,5 @@ public static partial class ConstructorBuilderInfoExtensions
       }
 
       builder.Writer.OpenBody();
-      
-      builder.ClearTemporaryData(builder.RegionIndexConstructors);
    }
 }

@@ -133,7 +133,8 @@ public static partial class ClassBuilderInfoExtensions
       return new GenericBuilderInfo(
          ref info, name, 
          builder.RegionIndexClassGenerics, 
-         builder.RegionIndexClassGenericConstraints);
+         builder.RegionIndexClassGenericConstraints,
+         true);
    }
    
    [MethodImpl(MethodImplOptions.AggressiveInlining)]

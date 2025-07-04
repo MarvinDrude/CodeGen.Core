@@ -20,12 +20,17 @@ public static partial class ClassBuilderInfoExtensions
       if (info.ConstructorCount > 0)
       {
          info.RenderConstructors();
+         
+         builder.ClearTemporaryData(builder.RegionIndexConstructors);
          info.ConstructorCount = 0;
       }
 
       if (info.MethodCount > 0)
       {
          info.RenderMethods();
+         
+         builder.ClearTemporaryData(builder.RegionIndexMethods);
+         builder.ClearTemporaryData(builder.RegionIndexMethodGenericConstraints);
          info.MethodCount = 0;
       }
       

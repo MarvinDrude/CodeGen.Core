@@ -77,12 +77,23 @@ public ref struct MethodBuilderInfo : IByteSerializable<MethodBuilderInfo>
       written = RefStringView.CalculateByteLength(in instance.ReturnType);
       RefStringView.Write(buffer, in instance.ReturnType);
       buffer = buffer[written..];
+
+      var totalGenericLength = 0;
+      var totalGenericConstraintLength = 0;
+
+      foreach (var generic in builder.GetTemporaryEnumerator<GenericBuilderInfo>(
+                  builder.RegionIndexMethodGenerics))
+      {
+         totalGenericLength += GenericBuilderInfo.CalculateByteLength(in generic);
+         totalGenericConstraintLength += generic.ByteLength;
+      }
       
-      var regionMeta = builder.TemporaryData.GetRegionMetadata(builder.RegionIndexMethodGenerics);
-      
-      regionMeta.InnerOffset.WriteLittleEndian(buffer);
+      totalGenericLength.WriteLittleEndian(buffer);
       buffer = buffer[sizeof(int)..];
       
+      totalGenericConstraintLength.WriteLittleEndian(buffer);
+      buffer = buffer[sizeof(int)..];
+
       instance.ParameterLength.WriteLittleEndian(buffer);
       buffer = buffer[sizeof(int)..];
       
@@ -91,10 +102,13 @@ public ref struct MethodBuilderInfo : IByteSerializable<MethodBuilderInfo>
       {
          var render = generic with
          {
-            _builderReference = ref Unsafe.As<ClassBuilderInfo, byte>(ref instance.ClassBuilder)
+            _builderReference = ref Unsafe.As<ClassBuilderInfo, byte>(ref instance.ClassBuilder),
+            RegionIndexConstraints = builder.RegionIndexMethodGenericConstraints,
+            RegionIndexGenerics = builder.RegionIndexMethodGenerics,
+            ConstraintLength = generic.ByteLength
          };
          
-         var length = GenericBuilderInfo.CalculateByteLength(in generic);
+         var length = GenericBuilderInfo.CalculateByteLength(in render);
          GenericBuilderInfo.Write(buffer, in render);
          
          buffer = buffer[length..];
@@ -135,15 +149,18 @@ public ref struct MethodBuilderInfo : IByteSerializable<MethodBuilderInfo>
       var lengthGenerics = buffer.ReadLittleEndian<int>(out read);
       buffer = buffer[read..];
       
+      var lengthGenericConstraints = buffer.ReadLittleEndian<int>(out read);
+      buffer = buffer[read..];
+      
       var lengthParameters = buffer.ReadLittleEndian<int>(out read);
       buffer = buffer[read..];
       
       instance.GenericParameterOffset = 
-         sizeof(int) * 2 + 1 + sizeof(AccessModifier) + sizeof(MethodModifier)
+         sizeof(int) * 3 + 1 + sizeof(AccessModifier) + sizeof(MethodModifier)
          + nameLength + returnLength;
       instance.GenericParameterLength = lengthGenerics;
 
-      instance.ParameterOffset = instance.GenericParameterOffset + instance.GenericParameterLength;
+      instance.ParameterOffset = instance.GenericParameterOffset + instance.GenericParameterLength + lengthGenericConstraints;
       instance.ParameterLength = lengthParameters;
       
       return instance.ParameterOffset + instance.ParameterLength;
@@ -153,11 +170,12 @@ public ref struct MethodBuilderInfo : IByteSerializable<MethodBuilderInfo>
    {
       ref var builder = ref instance.ClassBuilder.Builder;
       var regionMeta = builder.TemporaryData.GetRegionMetadata(builder.RegionIndexMethodGenerics);
+      var regionConstraintMeta = builder.TemporaryData.GetRegionMetadata(builder.RegionIndexMethodGenericConstraints);
       
-      return sizeof(AccessModifier) + sizeof(MethodModifier) + 1 
+      return sizeof(AccessModifier) + sizeof(MethodModifier) + 1 + sizeof(int) * 3
              + RefStringView.CalculateByteLength(in instance.Name)
              + RefStringView.CalculateByteLength(in instance.ReturnType)
-             + instance.ParameterLength + regionMeta.InnerOffset;
+             + instance.ParameterLength + regionMeta.InnerOffset + regionConstraintMeta.InnerOffset;
    }
 }
 
@@ -252,7 +270,8 @@ public static partial class MethodBuilderInfoExtensions
       return new GenericBuilderInfo(
          ref info.ClassBuilder, name,
          builder.RegionIndexMethodGenerics,
-         builder.RegionIndexMethodGenericConstraints);
+         builder.RegionIndexMethodGenericConstraints,
+         false);
    }
    
    public static ref MethodBuilderInfo AddParameter(

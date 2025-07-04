@@ -55,13 +55,41 @@ public static partial class MethodBuilderInfoExtensions
       builder.Writer.Write(" ");
       builder.Writer.Write(info.Name.Span);
 
+      if (info.GenericParameterLength > 0)
+      {
+         builder.RenderGenericParameter(span, info.GenericParameterOffset, info.GenericParameterLength);
+      }
+
       if (info.ParameterLength > 0)
       {
+         builder.Writer.WriteLine("(");
+         builder.Writer.UpIndent();
          
+         builder.RenderParameters(span, offset + info.ParameterOffset, info.ParameterLength);
+
+         builder.Writer.Write(")");
+         builder.Writer.DownIndent();
       }
       else
       {
-         
+         builder.Writer.Write("()");
+      }
+
+      if (info.GenericParameterLength > 0)
+      {
+         builder.Writer.UpIndent();
+         builder.Writer.WriteLine();
+         builder.RenderGenericConstraints(span, offset + info.GenericParameterOffset, info.GenericParameterLength);
+         builder.Writer.DownIndent();
+      }
+
+      if (info.IsSignatureOnly)
+      {
+         builder.Writer.WriteLine(";");
+      }
+      else
+      {
+         builder.Writer.OpenBody();
       }
    }
 }

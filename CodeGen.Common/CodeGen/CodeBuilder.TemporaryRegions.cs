@@ -46,4 +46,10 @@ public ref partial struct CodeBuilder
    {
       return TemporaryData.GetRegion(index);
    }
+
+   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+   public void ResizeTemporarySpan(int index, int size)
+   {
+      TemporaryData.ResizeRegion(index, size);
+   }
 }
