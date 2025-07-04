@@ -11,11 +11,11 @@ This is a lightweight library with useful structs and classes for when C# Source
 ## Contents 
 
 - Code Text Generation
-   - [CodeWriter](#CodeWriter-(least-abstract-way-of-generating-code))
+   - [CodeWriter](#CodeWriter-least-abstract-way-of-generating-code)
    - CodeBuilder
-      - [Fluent mode](#CodeBuilder-(Fluent-mode))
-      - [Stateful mode](#CodeBuilder-(stateful-mode))
-      - [Immediate mode](#CodeBuilder-(immediate-mode))
+      - [Fluent mode](#CodeBuilder-Fluent-mode)
+      - [Stateful mode](#CodeBuilder-stateful-mode)
+      - [Immediate mode](#CodeBuilder-immediate-mode)
 
 ## CodeWriter (least abstract way of generating code)
 
