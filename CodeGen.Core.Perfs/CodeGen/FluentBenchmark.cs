@@ -174,7 +174,7 @@ public class FluentBenchmark
       // zero allocation char span
       var cha = builder.Writer.WrittenSpan[0];
       // heap allocated string if needed
-      var str = builder.ToString();
+      //var str = builder.ToString();
       builder.Dispose();
       
       return cha;

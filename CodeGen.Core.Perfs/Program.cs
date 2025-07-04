@@ -19,9 +19,9 @@ using CodeGen.Core.Perfs.CodeGen;
 BenchmarkRunner.Run<FluentBenchmark>();
 #else
 
-//new FluentBenchmark().SimpleNoAllocationBenchmark();
+new FluentBenchmark().SimpleNoAllocationBenchmark();
 //new FluentBenchmark().CompareCodeGenHelpersBuilder();
-new FluentBenchmark().SimpleSmallNoAllocationBenchmark();
+//new FluentBenchmark().SimpleSmallNoAllocationBenchmark();
 
 // var builder = new CodeBuilder(
 //    stackalloc char[12],
