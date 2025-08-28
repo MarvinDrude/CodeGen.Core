@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+   <PropertyGroup>
+      <RootNamespace>CodeGen.Writing</RootNamespace>
+   </PropertyGroup>
+
+   <ItemGroup>
+      <PackageReference Include="Me.Memory" />
+   </ItemGroup>
+
+   <ItemGroup>
+     <ProjectReference Include="..\CodeGen.Contracts\CodeGen.Contracts.csproj" />
+   </ItemGroup>   
+   
+</Project>
