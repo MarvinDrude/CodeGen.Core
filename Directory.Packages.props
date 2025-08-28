@@ -1,0 +1,9 @@
+<Project>
+   <PropertyGroup>
+      <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+      <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+   </PropertyGroup>
+   <ItemGroup>
+      <PackageVersion Include="Me.Memory" Version="1.0.3" />
+   </ItemGroup>
+</Project>
