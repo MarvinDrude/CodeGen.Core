@@ -18,7 +18,7 @@ public class CodeTextWriterTests
       
       for (var index = 0; index < 20; index++)
       {
-         writer.WriteLine("Test");
+         writer.WriteInterpolated($"Test {index}");
       }
       
       writer.WriteInterpolated($"a {temp}");
