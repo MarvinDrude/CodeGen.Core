@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+   <ItemGroup>
+      <PackageReference Include="TUnit" />
+   </ItemGroup>
+
+   <ItemGroup>
+     <ProjectReference Include="..\..\CodeGen.Writing\CodeGen.Writing.csproj" />
+   </ItemGroup>
+
+</Project>

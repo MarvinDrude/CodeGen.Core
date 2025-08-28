@@ -5,5 +5,7 @@
    </PropertyGroup>
    <ItemGroup>
       <PackageVersion Include="Me.Memory" Version="1.0.3" />
+      <PackageVersion Include="TUnit" Version="0.25.21" />
+      <PackageVersion Include="BenchmarkDotNet" Version="0.15.2" />
    </ItemGroup>
 </Project>

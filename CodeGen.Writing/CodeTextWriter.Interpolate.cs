@@ -45,7 +45,7 @@ public ref struct CodeTextWriterInterpolatedStringHandler
       IFormatProvider? provider = null)
    {
       _writerReference = ref Unsafe.As<CodeTextWriter, byte>(ref writer);
-
+      
       _provider = provider;
       Count = 0;
    }

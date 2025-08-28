@@ -1,7 +1,10 @@
 ﻿<Solution>
-  <Folder Name="/Performance/" />
+  <Folder Name="/Performance/">
+    <Project Path="Performance\CodeGen.Writing.Performance\CodeGen.Writing.Performance.csproj" Type="Classic C#" />
+  </Folder>
   <Folder Name="/Tests/">
     <Project Path="Tests\CodeGen.Experiments\CodeGen.Experiments.csproj" Type="Classic C#" />
+    <Project Path="Tests\CodeGen.Writing.Tests\CodeGen.Writing.Tests.csproj" Type="Classic C#" />
   </Folder>
   <Project Path="CodeGen.Contracts\CodeGen.Contracts.csproj" Type="Classic C#" />
   <Project Path="CodeGen.Writing\CodeGen.Writing.csproj" Type="Classic C#" />
