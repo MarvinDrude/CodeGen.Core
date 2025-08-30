@@ -1,7 +1,7 @@
 ﻿namespace CodeGen.Contracts.Enums;
 
 [Flags]
-public enum AccessModifier
+public enum AccessModifier : ushort
 {
    None = 0,
    Private = 1 << 0,

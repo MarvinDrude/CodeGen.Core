@@ -3,7 +3,7 @@
 namespace CodeGen.Contracts.Enums;
 
 [Flags]
-public enum ClassModifier
+public enum ClassModifier : ushort
 {
    None = 0,
    Abstract = 1 << 0,

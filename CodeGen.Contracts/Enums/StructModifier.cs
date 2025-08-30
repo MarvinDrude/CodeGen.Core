@@ -3,15 +3,15 @@
 namespace CodeGen.Contracts.Enums;
 
 [Flags]
-public enum StructModifier
+public enum StructModifier : ushort
 {
    None = 0,
-   Partial = 1 << 1,
-   Unsafe = 1 << 2,
-   Record = 1 << 3,
-   ReadOnly = 1 << 4,
-   Ref = 1 << 5,
-   New = 1 << 6,
+   Partial = 1 << 0,
+   Unsafe = 1 << 1,
+   Record = 1 << 2,
+   ReadOnly = 1 << 3,
+   Ref = 1 << 4,
+   New = 1 << 5,
 }
 
 public static class StructModifierExtensions
@@ -51,9 +51,4 @@ public static class StructModifierExtensions
    private const string Unsafe = "unsafe";
    private const string New = "new";
    private const string Record = "record";
-}
-
-public new readonly unsafe ref partial struct Test
-{
-   
 }
