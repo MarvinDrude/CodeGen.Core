@@ -5,7 +5,7 @@ using Me.Memory.Buffers;
 
 namespace CodeGen.Writing;
 
-[StructLayout(LayoutKind.Auto)]
+[StructLayout(LayoutKind.Sequential)]
 public ref partial struct CodeTextWriter : IDisposable
 {
    public ReadOnlySpan<char> WrittenSpan

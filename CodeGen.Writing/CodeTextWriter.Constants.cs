@@ -2,8 +2,8 @@
 
 public ref partial struct CodeTextWriter
 {
-   private const char DefaultNewLine = '\n';
-   private const char DefaultIndent = ' ';
+   internal const char DefaultNewLine = '\n';
+   internal const char DefaultIndent = ' ';
    
-   private const int DefaultIndentSize = 3;
+   internal const int DefaultIndentSize = 3;
 }
