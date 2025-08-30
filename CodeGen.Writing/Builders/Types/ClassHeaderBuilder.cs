@@ -6,7 +6,7 @@ using CodeGen.Writing.Builders.Interfaces;
 namespace CodeGen.Writing.Builders.Types;
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly ref struct ClassHeaderBuilder : ICodeBuilder
+public readonly ref struct ClassHeaderBuilder : IAccessBuilder
 {
    private readonly ByReferenceStack _builder;
    internal ref CodeBuilder Builder => ref _builder.AsRef<CodeBuilder>();

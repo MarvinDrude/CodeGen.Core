@@ -1,9 +1,8 @@
 ﻿
-using CodeGen.Writing;
+using CodeGen.Contracts.Enums;
 using CodeGen.Writing.Builders;
 using CodeGen.Writing.Builders.Common;
 using CodeGen.Writing.Builders.Interfaces;
-using CodeGen.Writing.Models.Types;
 
 // Console.WriteLine("Hello, World!");
 //
@@ -38,7 +37,12 @@ try
          .WriteUsing("NameSpaceA")
          .WriteUsing("NameSpaceB.Test", true);
 
-   
+   builder.ClassHeader
+      .WriteAccess(AccessModifier.Public)
+      .WriteLine()
+      .WriteAccessPublic()
+      .WriteLine()
+      .WriteAccessProtectedInternal();
 
    Console.WriteLine(builder.Writer.ToString());
 }

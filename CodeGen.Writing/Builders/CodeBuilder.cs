@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using CodeGen.Writing.Builders.Common;
 using CodeGen.Writing.Builders.Interfaces;
+using CodeGen.Writing.Builders.Types;
 
 namespace CodeGen.Writing.Builders;
 
@@ -11,7 +12,8 @@ public ref struct CodeBuilder : ICodeBuilder
    public CodeTextWriter Writer;
 
    public FileBuilder File;
-
+   public ClassHeaderBuilder ClassHeader;
+   
    public CodeBuilder(
       Span<char> buffer,
       Span<char> indentBuffer,
@@ -30,6 +32,7 @@ public ref struct CodeBuilder : ICodeBuilder
 
       ref var self = ref Unsafe.AsRef(ref this);
       File = new FileBuilder(ref self);
+      ClassHeader = new ClassHeaderBuilder(ref self);
    }
 
    ref CodeBuilder ICodeBuilder.GetBuilder()
