@@ -27,17 +27,15 @@ public class CodeTextWriterSimpleTests
       {
          var writer = new CodeTextWriter(
             stackalloc char[16], stackalloc char[128]);
-         var str = "Test";
+         const string str = "Test";
 
-         writer.WriteInterpolated($"public class {str}");
-         writer.WriteLine();
+         writer.WriteLineInterpolated($"public class {str}");
          writer.OpenBody();
          
          writer.WriteLine("public string StrTest { get; set; }");
          writer.WriteLine();
          
-         writer.WriteInterpolated($"public {str}()");
-         writer.WriteLine();
+         writer.WriteLineInterpolated($"public {str}()");
          writer.OpenBody();
          writer.WriteLine($"StrTest = \"Test\";");
          writer.CloseBody();

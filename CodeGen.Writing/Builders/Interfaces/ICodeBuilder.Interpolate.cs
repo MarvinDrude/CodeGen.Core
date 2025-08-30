@@ -2,39 +2,50 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace CodeGen.Writing;
+namespace CodeGen.Writing.Builders.Interfaces;
 
-public static class CodeTextWriterInterpolatedStringHandlerExtensions
+public static class CodeBuilderInterpolateExtensions
 {
-   public static void WriteInterpolated(this ref CodeTextWriter writer, IFormatProvider? provider,
-      [InterpolatedStringHandlerArgument(nameof(writer), nameof(provider))]
-      scoped ref CodeTextWriterInterpolatedStringHandler handler)
-   { }
-
-   public static void WriteLineInterpolated(this ref CodeTextWriter writer, IFormatProvider? provider,
-      [InterpolatedStringHandlerArgument(nameof(writer), nameof(provider))]
-      scoped ref CodeTextWriterInterpolatedStringHandler handler)
+   public static ref T WriteInterpolated<T>(this ref T builder, IFormatProvider? provider,
+      [InterpolatedStringHandlerArgument(nameof(builder), nameof(provider))]
+      scoped ref CodeBuilderInterpolatedStringHandler<T> handler)
+      where T : struct, ICodeBuilder, allows ref struct
    {
-      writer.WriteLine();
+      return ref builder;
    }
    
-   public static void WriteInterpolated(this ref CodeTextWriter writer,
-      [InterpolatedStringHandlerArgument(nameof(writer))]
-      scoped ref CodeTextWriterInterpolatedStringHandler handler)
-   { }
-
-   public static void WriteLineInterpolated(this ref CodeTextWriter writer,
-      [InterpolatedStringHandlerArgument(nameof(writer))]
-      scoped ref CodeTextWriterInterpolatedStringHandler handler)
+   public static ref T WriteLineInterpolated<T>(this ref T builder, IFormatProvider? provider,
+      [InterpolatedStringHandlerArgument(nameof(builder), nameof(provider))]
+      scoped ref CodeBuilderInterpolatedStringHandler<T> handler)
+      where T : struct, ICodeBuilder, allows ref struct
    {
-      writer.WriteLine();
+      builder.WriteLine();
+      return ref builder;
+   }
+
+   public static ref T WriteInterpolated<T>(this ref T builder,
+      [InterpolatedStringHandlerArgument(nameof(builder))]
+      scoped ref CodeBuilderInterpolatedStringHandler<T> handler)
+      where T : struct, ICodeBuilder, allows ref struct
+   {
+      return ref builder;
+   }
+   
+   public static ref T WriteLineInterpolated<T>(this ref T builder,
+      [InterpolatedStringHandlerArgument(nameof(builder))]
+      scoped ref CodeBuilderInterpolatedStringHandler<T> handler)
+      where T : struct, ICodeBuilder, allows ref struct
+   {
+      builder.WriteLine();
+      return ref builder;
    }
 }
 
 [InterpolatedStringHandler]
 [EditorBrowsable(EditorBrowsableState.Never)]
 [StructLayout(LayoutKind.Auto)]
-public unsafe ref struct CodeTextWriterInterpolatedStringHandler
+public unsafe ref struct CodeBuilderInterpolatedStringHandler<T>
+   where T : struct, ICodeBuilder, allows ref struct
 {
    private readonly nint _writerPointer;
    private ref CodeTextWriter Writer
@@ -47,13 +58,13 @@ public unsafe ref struct CodeTextWriterInterpolatedStringHandler
 
    private readonly IFormatProvider? _provider;
 
-   public CodeTextWriterInterpolatedStringHandler(
+   public CodeBuilderInterpolatedStringHandler(
       int literalLength,
       int formattedCount,
-      scoped ref CodeTextWriter writer,
+      scoped ref T builder,
       IFormatProvider? provider = null)
    {
-      _writerPointer = (nint)Unsafe.AsPointer(ref writer);
+      _writerPointer = (nint)Unsafe.AsPointer(ref builder.GetBuilder().Writer);
       
       _provider = provider;
       Count = 0;
