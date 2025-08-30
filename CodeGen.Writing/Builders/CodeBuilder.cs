@@ -1,11 +1,12 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using CodeGen.Writing.Builders.Common;
+using CodeGen.Writing.Builders.Interfaces;
 
 namespace CodeGen.Writing.Builders;
 
 [StructLayout(LayoutKind.Sequential)]
-public ref struct CodeBuilder
+public ref struct CodeBuilder : ICodeBuilder
 {
    public CodeTextWriter Writer;
 
@@ -27,6 +28,12 @@ public ref struct CodeBuilder
          newLineChar,
          initialMinGrowCapacity);
 
-      File = new FileBuilder(ref Unsafe.AsRef(ref this));
+      ref var self = ref Unsafe.AsRef(ref this);
+      File = new FileBuilder(ref self);
+   }
+
+   ref CodeBuilder ICodeBuilder.GetBuilder()
+   {
+      return ref Unsafe.AsRef(ref this);
    }
 }
