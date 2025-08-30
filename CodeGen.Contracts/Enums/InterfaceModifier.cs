@@ -32,7 +32,7 @@ public static class InterfaceModifierExtensions
          if (modifier.HasFlag(InterfaceModifier.Unsafe)) length += Unsafe.Length + 1;
          if (modifier.HasFlag(InterfaceModifier.Partial)) length += Partial.Length + 1;
 
-         return length;
+         return Math.Max(0, length - 1);
       }
    }
    

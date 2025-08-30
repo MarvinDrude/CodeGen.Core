@@ -14,8 +14,9 @@
    </ItemGroup>
 
    <ItemGroup>
-     <Folder Include="Builders\" />
-     <Folder Include="Models\" />
+     <Folder Include="Builders\Common\" />
+     <Folder Include="Interfaces\" />
+     <Folder Include="Models\Members\" />
    </ItemGroup>   
    
 </Project>
