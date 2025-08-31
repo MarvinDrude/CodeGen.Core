@@ -74,6 +74,7 @@ try
       .CloseBody();
 
    Console.WriteLine(builder.Writer.ToString());
+   builder.Dispose();
 }
 catch (Exception e)
 {

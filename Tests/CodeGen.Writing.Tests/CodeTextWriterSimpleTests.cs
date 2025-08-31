@@ -26,23 +26,33 @@ public class CodeTextWriterSimpleTests
       static string CreateClassString()
       {
          var writer = new CodeTextWriter(
-            stackalloc char[16], stackalloc char[128]);
-         const string str = "Test";
+            stackalloc char[16], stackalloc char[128],
+            3, ' ');
+         string result;
+         
+         try
+         {
+            const string str = "Test";
 
-         writer.WriteLineInterpolated($"public class {str}");
-         writer.OpenBody();
-         
-         writer.WriteLine("public string StrTest { get; set; }");
-         writer.WriteLine();
-         
-         writer.WriteLineInterpolated($"public {str}()");
-         writer.OpenBody();
-         writer.WriteLine($"StrTest = \"Test\";");
-         writer.CloseBody();
-         
-         writer.CloseBody();
+            writer.WriteLineInterpolated($"public class {str}");
+            writer.OpenBody();
 
-         return writer.ToString();
+            writer.WriteLine("public string StrTest { get; set; }");
+            writer.WriteLine();
+
+            writer.WriteLineInterpolated($"public {str}()");
+            writer.OpenBody();
+            writer.WriteLine($"StrTest = \"Test\";");
+            writer.CloseBody();
+
+            writer.CloseBody();
+         }
+         finally
+         {
+            result = writer.ToString();
+            writer.Dispose();
+         }
+         return result;
       }
    }
 }
