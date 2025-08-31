@@ -1,413 +1,154 @@
 
-# C# Source Generation Library
+# 📝 C# Source Generation Library
 
-This is a lightweight library with useful structs and classes for when C# Source Generators support .NET 10 in the future. Still work in progress..
+A lightweight, performance-oriented library that provides efficient building blocks for C# source generation.
 
-## Supported features
+> ⚠️ Note: This project is still a work in progress. It is designed with future .NET (≥10) source generator scenarios in mind.
 
-- Fast zero / low allocation code text writer ⚡📝
-- More abstract code text builder on top of the writer 🧱🔧
+## ✨ Features
 
-## Contents 
+- ⚡ Fast, zero/low-allocation text writer (CodeTextWriter)
+- 🧱 Composable code builders on top of the writer (CodeBuilder)
+- 📝 Fluent APIs for common code-generation patterns (indents, bodies, blocks)
+- 🔒 ref struct design ensures stack-only safety and avoids heap allocations
+
+## 📦 Nuget packages
+
+| Project/Package name | Nuget                |
+| :-------- | :------------------------- |
+| CodeGen.Writing | [![Nuget](https://img.shields.io/badge/nuget-0A66C2?style=for-the-badge&logo=nuget&logoColor=white)](https://www.nuget.org/packages/CodeGen.Writing) |
+
+## 📚 Contents 
 
 - Code Text Generation
    - [CodeWriter](#CodeWriter-least-abstract-way-of-generating-code)
-   - CodeBuilder
-      - [Fluent mode](#CodeBuilder-Fluent-mode)
-      - [Stateful mode](#CodeBuilder-stateful-mode)
-      - [Immediate mode](#CodeBuilder-immediate-mode)
+   - [CodeBuilder](#CodeBuilder-some-more-useful-helpers)
 
-## CodeWriter (least abstract way of generating code)
+## ✍️📝⚡CodeWriter (least abstract way of generating code)
 
-Just a glorified zero / low allocation text writer as ref struct with some helper methods like OpenBody, CloseBody, UpIndent, DownIndent
+CodeWriter is essentially a zero/low-allocation text writer implemented as a ref struct.
+It comes with helper methods like OpenBody(), CloseBody(), UpIndent(), and DownIndent().
+
+You can also take advantage of interpolated string handlers so interpolated values never allocate on the heap before writing.
 ```C#
 // example with indent of 3 spaces
-using var writer = new CodeTextWriter(
-   stackalloc char[512],
-   stackalloc char[64],
+var writer = new CodeTextWriter(
+   stackalloc char[16], stackalloc char[128],
    3, ' ');
+string result;
 
-writer.WriteLine("public class Test");
-writer.OpenBody();
-writer.WriteLine("public string StrTest { get; set; }");
-writer.WriteLine();
-writer.WriteLine("public Test()");
-writer.OpenBody();
-writer.WriteLine("StrTest = \"Test\";");
-writer.CloseBody();
-writer.CloseBody();
-
-// if you need the result as a real heap string you will have to call ToString
-// if you only need a ReadOnlySpan<char> u can always access writer.WrittenSpan
-var strResult = writer.ToString();
-```
-In this very small example strResult will be the following:
-```C#
-public class Test
+try
 {
-   public string StrTest { get; set; }
+   const string str = "Test";
 
-   public Test()
-   {
-      StrTest = "Test";
-   }
+   writer.WriteLineInterpolated($"public class {str}");
+   writer.OpenBody();
+
+   writer.WriteLine("public string StrTest { get; set; }");
+   writer.WriteLine();
+
+   // does not allocate the interpolated string
+   writer.WriteLineInterpolated($"public {str}()");
+   writer.OpenBody();
+   writer.WriteLine($"StrTest = \"Test\";");
+   writer.CloseBody();
+
+   writer.CloseBody();
+}
+finally
+{
+   // if you need the result as a real heap string you will have to call ToString
+   // if you only need a ReadOnlySpan<char> u can always access writer.WrittenSpan
+   result = writer.ToString();
+   writer.Dispose();
+}
+
+return result;
+```
+
+## 🧱🔧🏗️ CodeBuilder (some more useful helpers)
+While CodeWriter is minimal and explicit, CodeBuilder introduces convenience helpers for common patterns you often repeat when generating C#.
+
+For example:
+
+- Automatic handling of class/namespace declarations
+- Simplified method/property scaffolding
+- Higher-level composition without losing performance guarantees
+
+```C#
+var builder = new CodeBuilder(
+   stackalloc char[1024], stackalloc char[128],
+   3, ' ');
+try 
+{
+   // ... build
+}
+finally 
+{
+   builder.Dispose();
 }
 ```
+The CodeBuilder offers all methods of the CodeTextWriter too, and you can chain them together, since all of them return the CodeBuilder or Module as ref in a fluent fashion.
 
-## CodeBuilder (Fluent mode)
+### 🌐 File Module of the CodeBuilder
+Offers most cases for the top of the file that is being generated. Here is a very common example
+- Writes the auto generated comment
+- Writes #nullable enable
+- Writes usings for this file
 
-More abstract way of generating code with zero / low allocations. Small example:
 ```C#
-var builder = new CodeBuilder(
-   stackalloc char[512],
-   stackalloc char[128],
-   3, ' ');
-builder.SetTemporaryBuffer(stackalloc byte[1024]);
-
-var test = builder.CreateClass();
-test.SetName("TestClassName")
-   .IsPartial()
-   .Render();
-
-builder.Writer.WriteLine("private readonly int _numberField;");
-builder.Writer.WriteLine();
-
-var instanceConstructor = test.AddConstructor(AccessModifier.Public);
-instanceConstructor
-   .AddParameter("int", "number")
-   .Done(); 
-test.Render();
-
-builder.Writer.WriteLine("_numberField = number;");
-
-builder.Writer.CloseBody();
-
-// close class
-builder.Writer.CloseBody();
-
-// zero allocation char span
-var cha = builder.Writer.WrittenSpan[0];
-// heap allocated string if needed
-var str = builder.ToString();
-builder.Dispose();
-```
-More comprehensive example:
-```C#
-// this example does not use heap allocations besides the ToString at the end if needed
-// this setup is probably already pushing the safe limit of sack allocations
-// general rule of thumb can be 1kb to 4kb at max depending on nesting etc.
-var builder = new CodeBuilder(
-   stackalloc char[1024],
-   stackalloc char[128],
-   3, ' ');
-builder.SetTemporaryBuffer(stackalloc byte[1024]);
-
-builder.NameSpace.Usings = [
-   "System.Test",
-   "System.A",
-   "System.B"
-];
-builder.NameSpace.EnableNullable = true;
-builder.NameSpace.AutoGenerated = true;
-
-builder.NameSpace.Path = "My.NameSpace";
-builder.NameSpace.Render();
-
-// due to the limitation of possible zero heap allocation + the temporary buffer
-// u will always need to create classes one at a time per CodeBuilder until u flush with Render()
-var test = builder.CreateClass();
-test
-   .SetName("TestA")
-      .IsRecordClass()
-      .IsPartial()
-      .IsInternal()
-      .IsUnsafe()
-   .SetBaseClassName("TestBase")
-      .AddInterfaceName("IInterfaceTwo")
-      .AddInterfaceName("IInterfaceThree");
-
-// Add generic parameters to class if needed
-var genericParamOne = test.AddGenericParameter("TParameter");
-genericParamOne
-   .AddConstraint("notnull")
-   .Done(); // write it to the current class generic temporary buffer
-
-var genericParamTwo = test.AddGenericParameter("TResult");
-genericParamTwo
-   .AddConstraint("struct")
-   .AddConstraint("allows ref struct")
-   .Done(); 
-
-test.Render(); 
-// flush class header to free temporary buffer (stack allocated is limited)
-// u can always choose to not flush and the temporary buffer will be heap allocated automatically
-// as soon as the stack allocated buffer is exceeded
-
-builder.Writer.WriteLine("private static readonly string StaticFieldTest;");
-builder.Writer.WriteLine();
-
-builder.Writer.WriteLine("private int _numberField;");
-builder.Writer.WriteLine("private int _numberField1;");
-builder.Writer.WriteLine();
-// you can write normal lines and text between Render() flushes whenever you need custom code
-
-var staticConstructor = test.AddConstructor(AccessModifier.None);
-staticConstructor
-   .IsStatic()
-   .Done(); // write it to the current class generic temporary buffer
-test.Render(); // flush the static constructor header
-
-builder.Writer.WriteLine("StaticFieldTest = \"Look a string!\";");
-builder.Writer.CloseBody();
-builder.Writer.WriteLine();
-
-var instanceConstructor = test.AddConstructor(AccessModifier.Public);
-instanceConstructor
-   .WithThisCall()
-   .AddThisParameter("number") // add one parameter to : this() call
-   .AddThisParameter("0")
-   .AddParameter("int", "number")
-   .Done(); 
-test.Render();
-builder.Writer.CloseBody();
-builder.Writer.WriteLine();
-
-var instanceConstructorImpl = test.AddConstructor(AccessModifier.Public);
-instanceConstructorImpl
-   .AddParameter("int", "number")
-   .AddParameter("int", "number1")
-   .Done();
-test.Render();
-builder.Writer.WriteLine("_numberField = number;");
-builder.Writer.WriteLine("_numberField1 = number1;");
-builder.Writer.CloseBody();
-builder.Writer.WriteLine();
-
-var genericMethod = test.AddMethod("GenericMethodName");
-genericMethod
-   .IsInternal()
-   .AddModifier(MethodModifier.Async | MethodModifier.Static)
-   .AddParameter("TMethod", "input")
-   .SetReturnType("Task<bool>");
-
-var genericMethodParameter = genericMethod.AddGenericParameter("TMethod");
-genericMethodParameter
-   .AddConstraint("notnull")
-   .Done();
-
-genericMethod.Done();
-test.Render();
-
-builder.Writer.WriteLine("// test comment");
-builder.Writer.WriteLine("throw new System.NotImplementedException();");
-
-builder.Writer.CloseBody();
-
-builder.Writer.CloseBody();
-
-// WrittenSpan is full class as ReadOnlySpan<char> if you can work with that and has no additional heap allocation
-var cha = builder.Writer.WrittenSpan[0];
-// ToString allocates a new heap string based on WrittenSpan
-var str = builder.ToString();
-
-// Dispose should always be called (best in a finally) but is only responsible for freeing any heap allocations
-// that were necessary (in this example there were none)
-builder.Dispose();
-```
-This more comprehensive example will result in the following:
-```C#
-#nullable enable
-// <auto-generated>
-
-using System.Test;
-using System.A;
-using System.B;
-
-namespace My.NameSpace;
-
-internal unsafe partial record TestA<TParameter, TResult>
-   : TestBase,
-     IInterfaceTwo,
-     IInterfaceThree
-   where TParameter : notnull
-   where TResult : struct, allows ref struct
-{
-   private static readonly string StaticFieldTest;
-
-   private int _numberField;
-   private int _numberField1;
-
-   static TestA()
-   {
-      StaticFieldTest = "Look a string!";
-   }
-
-   public TestA(
-      int number)
-      : this(number, 0)
-   {
-   }
-
-   public TestA(
-      int number, 
-      int number1)
-   {
-      _numberField = number;
-      _numberField1 = number1;
-   }
-
-   internal static async Task<bool> GenericMethodName<TMethod>(
-      TMethod input)
-      where TMethod : notnull
-   {
-      // test comment
-      throw new System.NotImplementedException();
-   }
-}
+builder.File
+   .WriteStartAutoGenerated()
+      .WriteLine("// Here")
+      .WriteLine("// is a message")
+      .WriteLineInterpolated($"// Test {x}")
+   .WriteEndAutoGenerated()
+   .WriteNullableEnable()
+      .WriteUsing("NameSpaceA")
+      .WriteUsing("NameSpaceB.Test", true);
 ```
 
-## CodeBuilder (stateful mode)
+### 🏛️ TypeHeader Module of the CodeBuilder
+This can hel you writing the header part of classes/structs/interfaces. It supports:
+- Access Modifier
+- Modifiers
+- Generic Parameters / Constraints
+- Primary Constructor
+- Base List
 
-More abstract way of generating code with still zero / low allocations. Small example:
+Here is a comprehensive example:
 ```C#
-var builder = new CodeBuilder(
-   stackalloc char[1024],
-   stackalloc char[6],
-   1, '\t');
+builder.TypeHeader
+   .WriteAccessInternal()
+   .WriteClassModifiers(ClassModifier.Sealed | ClassModifier.Partial)
+   .WriteClass("ClassName")
+   .WriteStartGenericParameters()
+      .WriteGenericParameter("T")
+      .WriteGenericParameter("T2", true)
+   .WriteEndGenericParameters()
+   .WriteStartParameterList()
+      .WriteParameter("string name")
+      .WriteParameter("int age")
+      .WriteParameterInterpolated(false, false, $"int test = {x}")
+   .WriteEndParameterList()
+   .WriteStartBaseList()
+      .WriteBaseType("BaseClass")
+      .WriteBaseType("IInterfaceBase", true)
+   .WriteEndBaseList()
+   .WriteStartGenericConstraints("T")
+      .WriteGenericConstraint("notnull")
+      .WriteGenericConstraint("IInterfaceName", true)
+   .WriteLineEndGenericConstraints()
+   .WriteStartGenericConstraints("T2")
+      .WriteGenericConstraint("class")
+   .WriteLineEndGenericConstraints()
+   .OpenBody();
 
-builder.NameSpace.Usings = [
-   "System.Test",
-   "System.A",
-   "System.B"
-];
-builder.NameSpace.EnableNullable = true;
-builder.NameSpace.AutoGenerated = true;
-
-builder.NameSpace.Path = "My.NameSpace";
-builder.NameSpace.Render();
-
-builder.Class.Declaration = "public abstract class Test";
-builder.Class.BaseDeclarations = [
-   "BaseClassOne",
-   "IInterfaceTwo"
-];
-builder.Class.RenderDeclaration();
-
-builder.Method.Modifiers = "public abstract";
-builder.Method.ReturnType = "void";
-builder.Method.Name = "TestMethod";
-
-builder.Method.Parameters = [
-   new MethodParameter()
-   {
-      Name = "name",
-      Type = "string"
-   }
-];
-builder.Method.RenderHeader();
-
-builder.Writer.OpenBody();
-builder.Writer.WriteLine("Console.WriteLine(name);");
-builder.Writer.CloseBody();
-
-builder.Writer.WriteLine();
-
-builder.Method.Modifiers = "public abstract";
-builder.Method.ReturnType = "void";
-builder.Method.Name = "AbstractMethod";
-
-builder.Method.IsOnlyHeader = true;
-builder.Method.RenderHeader();
-
-builder.Writer.CloseBody();
-
-// if you need the result as a real heap string you will have to call ToString
-var strResult = builder.ToString();
-```
-This stateful building will result in this output string:
-```C#
-#nullable enable
-// <auto-generated>
-
-using System.Test;
-using System.A;
-using System.B;
-
-namespace My.NameSpace;
-
-public abstract class Test
-   : BaseClassOne,
-     IInterfaceTwo
-{
-   public abstract void TestMethod(
-      string name)
-   {
-      Console.WriteLine(name);
-   }
-
-   public abstract void AbstractMethod();
-}
-```
-
-## CodeBuilder (immediate mode)
-
-More abstract way of generating code with still zero / low allocations. Small example:
-```C#
-var builder = new CodeBuilder(
-   stackalloc char[1024],
-   stackalloc char[6],
-   1, '\t', enableStateBuilders: false); // disable state builder overhead
-
-builder.NameSpaceIm
-   .EnableNullable()
-   .AutoGeneratedComment()
-   .WriteLine()
-      .Using("System.Test")
-      .Using("System.A")
-      .Using("System.B")
-      .WriteLine()
-   .Set("My.NameSpace")
-   .WriteLine();
-
-builder.ClassIm
-   .OpenHeader("public abstract class Test")
-      .FirstBaseDeclaration("BaseClassOne")
-      .NextBaseDeclaration("IInterfaceTwo")
-      .CloseBaseDeclaration()
-   .CloseHeader()
-   .Done()
-   .MethodIm.OpenHeader("public", "void", "TestMethod")
-      .FirstParameter("string", "name")
-   .CloseHeader()
+builder.WriteLine("public static void Test()")
    .OpenBody()
-      .WriteLine("Console.WriteLine(name);")
-   .CloseBody()
-   .WriteLine()
-   .OpenHeader("public abstract", "void", "AbstractMethod", false)
-   .CloseHeaderNoParameters(true)
+      .WriteLine("Console.WriteLine(\"Test\");")
    .CloseBody();
-```
-This immediate building will result in this output string:
-```C#
-#nullable enable
-// <auto-generated>
 
-using System.Test;
-using System.A;
-using System.B;
-
-namespace My.NameSpace;
-
-public abstract class Test
-   : BaseClassOne,
-     IInterfaceTwo
-{
-   public abstract void TestMethod(
-      string name)
-   {
-      Console.WriteLine(name);
-   }
-
-   public abstract void AbstractMethod();
-}
+builder.TypeHeader
+   .CloseBody();
 ```
