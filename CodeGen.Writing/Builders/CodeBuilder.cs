@@ -12,7 +12,7 @@ public ref struct CodeBuilder : ICodeBuilder
    public CodeTextWriter Writer;
 
    public FileBuilder File;
-   public ClassHeaderBuilder ClassHeader;
+   public TypeHeaderBuilder TypeHeader;
    
    public CodeBuilder(
       Span<char> buffer,
@@ -32,7 +32,7 @@ public ref struct CodeBuilder : ICodeBuilder
 
       ref var self = ref Unsafe.AsRef(ref this);
       File = new FileBuilder(ref self);
-      ClassHeader = new ClassHeaderBuilder(ref self);
+      TypeHeader = new TypeHeaderBuilder(ref self);
    }
 
    ref CodeBuilder ICodeBuilder.GetBuilder()

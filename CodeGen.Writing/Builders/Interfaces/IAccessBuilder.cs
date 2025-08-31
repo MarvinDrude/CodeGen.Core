@@ -25,26 +25,26 @@ public static class AccessBuilderExtensions
 
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ref T WriteAccessPublic(bool indented = true) 
-         => ref WriteAccess<T>(ref builder, AccessModifier.Public, indented);
+         => ref WriteAccess(ref builder, AccessModifier.Public, indented);
       
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ref T WriteAccessInternal(bool indented = true) 
-         => ref WriteAccess<T>(ref builder, AccessModifier.Internal, indented);
+         => ref WriteAccess(ref builder, AccessModifier.Internal, indented);
       
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ref T WriteAccessPrivate(bool indented = true) 
-         => ref WriteAccess<T>(ref builder, AccessModifier.Private, indented);
+         => ref WriteAccess(ref builder, AccessModifier.Private, indented);
       
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ref T WriteAccessProtected(bool indented = true) 
-         => ref WriteAccess<T>(ref builder, AccessModifier.Protected, indented);
+         => ref WriteAccess(ref builder, AccessModifier.Protected, indented);
       
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ref T WriteAccessProtectedInternal(bool indented = true) 
-         => ref WriteAccess<T>(ref builder, AccessModifier.ProtectedInternal, indented);
+         => ref WriteAccess(ref builder, AccessModifier.ProtectedInternal, indented);
       
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ref T WriteAccessPrivateProtected(bool indented = true) 
-         => ref WriteAccess<T>(ref builder, AccessModifier.PrivateProtected, indented);
+         => ref WriteAccess(ref builder, AccessModifier.PrivateProtected, indented);
    }
 }

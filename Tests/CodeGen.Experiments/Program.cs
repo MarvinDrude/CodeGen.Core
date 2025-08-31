@@ -3,6 +3,7 @@ using CodeGen.Contracts.Enums;
 using CodeGen.Writing.Builders;
 using CodeGen.Writing.Builders.Common;
 using CodeGen.Writing.Builders.Interfaces;
+using CodeGen.Writing.Builders.Types;
 
 // Console.WriteLine("Hello, World!");
 //
@@ -37,12 +38,15 @@ try
          .WriteUsing("NameSpaceA")
          .WriteUsing("NameSpaceB.Test", true);
 
-   builder.ClassHeader
-      .WriteAccess(AccessModifier.Public)
-      .WriteLine()
-      .WriteAccessPublic()
-      .WriteLine()
-      .WriteAccessProtectedInternal();
+   builder.TypeHeader
+      .UpIndent()
+      .WriteAccessInternal()
+      .WriteClassModifiers(ClassModifier.Static | ClassModifier.Partial)
+      .WriteClass("ClassName")
+      .WriteStartGenericParameters()
+         .WriteGenericParameter("T")
+         .WriteGenericParameter("T2", true)
+      .WriteEndGenericParameters();
 
    Console.WriteLine(builder.Writer.ToString());
 }

@@ -89,12 +89,12 @@ public unsafe ref struct CodeBuilderInterpolatedStringHandler<T>
       Count += 0;
    }
 
-   public void AppendFormatted<T>(T value, string? format = null)
+   public void AppendFormatted<TType>(TType value, string? format = null)
    {
       Count += AppendFormattedInternal(value, format);
    }
    
-   private int AppendFormattedInternal<T>(T value, string? format)
+   private int AppendFormattedInternal<TType>(TType value, string? format)
    {
       var charsWritten = value switch
       {

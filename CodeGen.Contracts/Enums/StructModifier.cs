@@ -16,7 +16,7 @@ public enum StructModifier : ushort
 
 public static class StructModifierExtensions
 {
-   extension(ClassModifier modifier)
+   extension(StructModifier modifier)
    {
       public void FillCharBuffer(scoped in Span<char> buffer)
       {
