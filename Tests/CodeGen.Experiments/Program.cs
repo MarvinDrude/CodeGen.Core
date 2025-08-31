@@ -4,6 +4,7 @@ using CodeGen.Writing.Builders;
 using CodeGen.Writing.Builders.Common;
 using CodeGen.Writing.Builders.Interfaces;
 using CodeGen.Writing.Builders.Types;
+using CodeGen.Writing.Models.Common;
 
 // Console.WriteLine("Hello, World!");
 //
@@ -24,7 +25,7 @@ using CodeGen.Writing.Builders.Types;
 try
 {
    var builder = new CodeBuilder(
-      stackalloc char[256], stackalloc char[128]);
+      stackalloc char[1024], stackalloc char[128]);
 
    const int x = 20;
    
@@ -37,16 +38,40 @@ try
       .WriteNullableEnable()
          .WriteUsing("NameSpaceA")
          .WriteUsing("NameSpaceB.Test", true);
-
+   
    builder.TypeHeader
-      .UpIndent()
       .WriteAccessInternal()
-      .WriteClassModifiers(ClassModifier.Static | ClassModifier.Partial)
+      .WriteClassModifiers(ClassModifier.Sealed | ClassModifier.Partial)
       .WriteClass("ClassName")
       .WriteStartGenericParameters()
          .WriteGenericParameter("T")
          .WriteGenericParameter("T2", true)
-      .WriteEndGenericParameters();
+      .WriteEndGenericParameters()
+      .WriteStartParameterList()
+         .WriteParameter("string name")
+         .WriteParameter("int age")
+         .WriteParameterInterpolated(false, false, $"int test = {x}")
+      .WriteEndParameterList()
+      .WriteStartBaseList()
+         .WriteBaseType("BaseClass")
+         .WriteBaseType("IInterfaceBase", true)
+      .WriteEndBaseList()
+      .WriteStartGenericConstraints("T")
+         .WriteGenericConstraint("notnull")
+         .WriteGenericConstraint("IInterfaceName", true)
+      .WriteLineEndGenericConstraints()
+      .WriteStartGenericConstraints("T2")
+         .WriteGenericConstraint("class")
+      .WriteLineEndGenericConstraints()
+      .OpenBody();
+
+   builder.WriteLine("public static void Test()")
+      .OpenBody()
+         .WriteLine("Console.WriteLine(\"Test\");")
+      .CloseBody();
+   
+   builder.TypeHeader
+      .CloseBody();
 
    Console.WriteLine(builder.Writer.ToString());
 }

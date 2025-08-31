@@ -11,6 +11,10 @@
 
    <ItemGroup>
      <ProjectReference Include="..\CodeGen.Contracts\CodeGen.Contracts.csproj" />
+   </ItemGroup>
+
+   <ItemGroup>
+     <Folder Include="Models\Members\" />
    </ItemGroup>   
    
 </Project>

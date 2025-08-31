@@ -7,7 +7,7 @@ using CodeGen.Writing.Builders.Types;
 namespace CodeGen.Writing.Builders;
 
 [StructLayout(LayoutKind.Sequential)]
-public ref struct CodeBuilder : ICodeBuilder
+public ref struct CodeBuilder : ICodeBuilder, IDisposable
 {
    public CodeTextWriter Writer;
 
@@ -38,5 +38,10 @@ public ref struct CodeBuilder : ICodeBuilder
    ref CodeBuilder ICodeBuilder.GetBuilder()
    {
       return ref Unsafe.AsRef(ref this);
+   }
+
+   public void Dispose()
+   {
+      Writer.Dispose();
    }
 }

@@ -7,7 +7,8 @@ using CodeGen.Writing.Builders.Interfaces;
 namespace CodeGen.Writing.Builders.Types;
 
 [StructLayout(LayoutKind.Sequential)]
-public readonly ref struct TypeHeaderBuilder : IAccessBuilder, IGenericBuilder
+public readonly ref struct TypeHeaderBuilder 
+   : IAccessBuilder, IGenericBuilder, IMethodParameterBuilder
 {
    private readonly ByReferenceStack _builder;
    internal ref CodeBuilder Builder => ref _builder.AsRef<CodeBuilder>();
@@ -28,6 +29,43 @@ public static class TypeHeaderBuilderExtensions
 {
    extension(ref TypeHeaderBuilder builder)
    {
+      public ref TypeHeaderBuilder WriteStartBaseList(bool newLine = false)
+      {
+         ref var writer = ref builder.Builder.Writer;
+         
+         writer.UpIndent();
+         if (newLine) writer.WriteLine();
+         writer.Write(": ");
+         
+         return ref builder;
+      }
+
+      public ref TypeHeaderBuilder WriteEndBaseList(bool newLine = true)
+      {
+         ref var writer = ref builder.Builder.Writer;
+         
+         if (newLine) writer.WriteLine();
+         writer.DownIndent();
+         return ref builder;
+      }
+
+      public ref TypeHeaderBuilder WriteBaseType(string name, bool addNewLineCommaFront = false)
+      {
+         ref var writer = ref builder.Builder.Writer;
+
+         if (addNewLineCommaFront)
+         {
+            writer.WriteLine(",");
+            writer.WriteInterpolated($"  {name}");
+         }
+         else
+         {
+            writer.Write(name);
+         }
+         
+         return ref builder;
+      }
+      
       public ref TypeHeaderBuilder WriteStruct(string name, bool addSpaceInFront = true)
       {
          ref var writer = ref builder.Builder.Writer;
@@ -99,6 +137,5 @@ public static class TypeHeaderBuilderExtensions
          
          return ref builder;
       }
-
    }
 }
