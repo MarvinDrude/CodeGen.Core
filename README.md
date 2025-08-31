@@ -33,7 +33,7 @@ You can also take advantage of interpolated string handlers so interpolated valu
 ```C#
 // example with indent of 3 spaces
 var writer = new CodeTextWriter(
-   stackalloc char[16], stackalloc char[128],
+   stackalloc char[256], stackalloc char[128],
    3, ' ');
 string result;
 
