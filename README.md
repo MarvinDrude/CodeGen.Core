@@ -21,8 +21,8 @@ A lightweight, performance-oriented library that provides efficient building blo
 ## 📚 Contents 
 
 - Code Text Generation
-   - [CodeWriter](#✍️📝⚡-CodeWriter-least-abstract-way-of-generating-code)
-   - [CodeBuilder](#🧱🔧🏗️-CodeBuilder-some-more-useful-helpers)
+   - [CodeWriter](#codewriter-least-abstract-way-of-generating-code)
+   - [CodeBuilder](#codebuilder-some-more-useful-helpers)
 
 ## ✍️📝⚡CodeWriter (least abstract way of generating code)
 
