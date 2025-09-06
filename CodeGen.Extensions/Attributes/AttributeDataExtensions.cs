@@ -62,7 +62,7 @@ public static class AttributeDataExtensions
             : null;
       }
 
-      public string? GetEnumFullNameValue(string name, string? defaultValue = null)
+      public string? GetNamedEnumFullNameValue(string name, string? defaultValue = null)
       {
          return attributeData.TryGetNamedArgument(name, out var constant)
             ? constant.GetEnumFullNameValue(defaultValue)
