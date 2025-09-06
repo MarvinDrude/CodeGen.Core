@@ -7,5 +7,6 @@
     <Project Path="Tests\CodeGen.Writing.Tests\CodeGen.Writing.Tests.csproj" Type="Classic C#" />
   </Folder>
   <Project Path="CodeGen.Contracts\CodeGen.Contracts.csproj" Type="Classic C#" />
+  <Project Path="CodeGen.Extensions\CodeGen.Extensions.csproj" Type="Classic C#" />
   <Project Path="CodeGen.Writing\CodeGen.Writing.csproj" Type="Classic C#" />
 </Solution>
