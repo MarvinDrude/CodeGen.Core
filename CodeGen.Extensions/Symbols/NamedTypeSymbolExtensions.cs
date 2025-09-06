@@ -1,4 +1,5 @@
 ﻿using CodeGen.Contracts.Enums;
+using CodeGen.Extensions.Enums;
 using CodeGen.Extensions.Infos.NamedTypes;
 using Microsoft.CodeAnalysis;
 
@@ -44,20 +45,54 @@ public static class NamedTypeSymbolExtensions
       public bool IsInterface => symbol.TypeKind == TypeKind.Interface;
       public bool IsRecord => symbol.IsRecord;
       public bool IsClass => symbol.TypeKind == TypeKind.Class;
-
+      
       public NamedTypeInfo<ClassModifier> CreateClassInfo()
       {
-         return new NamedTypeInfo<ClassModifier>();
+         var modifiers = ClassModifier.None;
+         if (symbol.IsStatic) modifiers |= ClassModifier.Static;
+         if (symbol.IsAbstract) modifiers |= ClassModifier.Abstract;
+         if (symbol.IsSealed) modifiers |= ClassModifier.Sealed;
+         if (symbol.IsRecord) modifiers |= ClassModifier.Record;
+         if (symbol.DeclaringSyntaxReferences.Length > 1) modifiers |= ClassModifier.Partial;
+         
+         return symbol.CreateTypeInfo(modifiers);
       }
 
       public NamedTypeInfo<InterfaceModifier> CreateInterfaceInfo()
       {
-         return new NamedTypeInfo<InterfaceModifier>();
+         var modifiers = InterfaceModifier.None;
+         if (symbol.DeclaringSyntaxReferences.Length > 1) modifiers |= InterfaceModifier.Partial;
+         
+         return symbol.CreateTypeInfo(modifiers);
       }
 
       public NamedTypeInfo<StructModifier> CreateStructInfo()
       {
-         return new NamedTypeInfo<StructModifier>();
+         var modifiers = StructModifier.None;
+         if (symbol.DeclaringSyntaxReferences.Length > 1) modifiers |= StructModifier.Partial;
+         if (symbol.IsReadOnly) modifiers |= StructModifier.ReadOnly;
+         if (symbol.IsRefLikeType) modifiers |= StructModifier.Ref;
+         if (symbol.IsRecord) modifiers |= StructModifier.Record;
+         
+         return symbol.CreateTypeInfo(modifiers);
+      }
+
+      private NamedTypeInfo<T> CreateTypeInfo<T>(T modifiers) 
+         where T : Enum
+      {
+         var nameSpace = symbol.ContainingNamespace.ToString();
+         if (nameSpace == "<global namespace>")
+         {
+            nameSpace = null;
+         }
+
+         return new NamedTypeInfo<T>(
+            symbol.Name,
+            nameSpace,
+            symbol.DeclaredAccessibility.ToModifier(),
+            modifiers,
+            symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+            symbol.ToMetadataFullyQualifiedName());
       }
    }
 }
