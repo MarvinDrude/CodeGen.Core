@@ -49,10 +49,10 @@ public static class TypedConstantExtensions
             ? typedConstant.Value as ITypeSymbol : null;
       }
 
-      public string? GetEnumFullNameValue()
+      public string? GetEnumFullNameValue(string? defaultValue = null)
       {
          return typedConstant is { Kind: TypedConstantKind.Enum }
-            ? typedConstant.ToCSharpString() : null;
+            ? typedConstant.ToCSharpString() : defaultValue;
       }
    }
 }

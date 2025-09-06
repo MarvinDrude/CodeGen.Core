@@ -50,10 +50,10 @@ public static class TypedConstantArrayExtensions
             : [];
       }
 
-      public string?[] GetEnumFullNameArrayValues()
+      public string?[] GetEnumFullNameArrayValues(string? defaultValue = null)
       {
          return typedConstant.IsArray
-            ? typedConstant.Values.Select(x => x.GetEnumFullNameValue()).ToArray()
+            ? typedConstant.Values.Select(x => x.GetEnumFullNameValue(defaultValue)).ToArray()
             : [];
       }
    }
