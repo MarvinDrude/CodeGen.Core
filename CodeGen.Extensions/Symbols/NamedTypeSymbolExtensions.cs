@@ -1,4 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using CodeGen.Contracts.Enums;
+using CodeGen.Extensions.Infos.NamedTypes;
+using Microsoft.CodeAnalysis;
 
 namespace CodeGen.Extensions.Symbols;
 
@@ -35,5 +37,27 @@ public static class NamedTypeSymbolExtensions
          
          _ => "class"
       };
+      
+      public bool IsStruct => symbol.TypeKind == TypeKind.Struct;
+      public bool IsEnum => symbol.TypeKind == TypeKind.Enum;
+      public bool IsDelegate => symbol.TypeKind == TypeKind.Delegate;
+      public bool IsInterface => symbol.TypeKind == TypeKind.Interface;
+      public bool IsRecord => symbol.IsRecord;
+      public bool IsClass => symbol.TypeKind == TypeKind.Class;
+
+      public NamedTypeInfo<ClassModifier> CreateClassInfo()
+      {
+         return new NamedTypeInfo<ClassModifier>();
+      }
+
+      public NamedTypeInfo<InterfaceModifier> CreateInterfaceInfo()
+      {
+         return new NamedTypeInfo<InterfaceModifier>();
+      }
+
+      public NamedTypeInfo<StructModifier> CreateStructInfo()
+      {
+         return new NamedTypeInfo<StructModifier>();
+      }
    }
 }
