@@ -11,12 +11,14 @@ A lightweight, performance-oriented library that provides efficient building blo
 - 🧱 Composable code builders on top of the writer (CodeBuilder)
 - 📝 Fluent APIs for common code-generation patterns (indents, bodies, blocks)
 - 🔒 ref struct design ensures stack-only safety and avoids heap allocations
+- Useful extensions to be used for rosyln apis
 
 ## 📦 Nuget packages
 
 | Project/Package name | Nuget                |
 | :-------- | :------------------------- |
 | CodeGen.Writing | [![Nuget](https://img.shields.io/badge/nuget-0A66C2?style=for-the-badge&logo=nuget&logoColor=white)](https://www.nuget.org/packages/CodeGen.Writing) |
+| CodeGen.Extensions | [![Nuget](https://img.shields.io/badge/nuget-0A66C2?style=for-the-badge&logo=nuget&logoColor=white)](https://www.nuget.org/packages/CodeGen.Extensions) |
 
 ## 📚 Contents 
 
