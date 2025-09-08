@@ -40,6 +40,11 @@ public ref struct CodeBuilder : ICodeBuilder, IDisposable
       return ref Unsafe.AsRef(ref this);
    }
 
+   public override string ToString()
+   {
+      return Writer.ToString();
+   }
+
    public void Dispose()
    {
       Writer.Dispose();
