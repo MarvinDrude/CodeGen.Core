@@ -8,4 +8,9 @@ public readonly record struct NamedTypeInfo<TModifiers>(
    AccessModifier Access,
    TModifiers Modifiers,
    string FullPathName,
-   string FullPathMetadataName);
+   string FullPathMetadataName)
+{
+   public string FileNameSpace => NameSpace ?? "Global";
+   
+   public string GeneratedFileName => $"{FileNameSpace}.{Name}.g.cs";
+}
